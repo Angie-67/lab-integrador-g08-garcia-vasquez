@@ -4,3 +4,6 @@
 
 local.properties
 
+# Firebase config is local to each developer and must not be committed.
+app/google-services.json
+
