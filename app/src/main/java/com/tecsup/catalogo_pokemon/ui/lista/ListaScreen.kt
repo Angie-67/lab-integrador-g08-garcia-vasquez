@@ -29,6 +29,7 @@ fun ListaScreen(
     viewModel: ListaViewModel,
     esAdministrador: Boolean,
     onAbrirDetalle: (String) -> Unit,
+    onAbrirFavoritos: () -> Unit,
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
@@ -47,6 +48,9 @@ fun ListaScreen(
         ) {
             Text("Pokédex", style = MaterialTheme.typography.headlineMedium)
             Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = onAbrirFavoritos) {
+                    Text("Favoritos")
+                }
                 if (esAdministrador) {
                     TextButton(onClick = onAbrirAdmin) {
                         Text("Panel Admin")

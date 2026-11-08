@@ -20,11 +20,14 @@ import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleScreen
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
+import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosScreen
+import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaScreen
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 
 private enum class PantallaAplicacion {
     CATALOGO,
+    FAVORITOS,
     DETALLE,
     ADMIN
 }
@@ -34,6 +37,7 @@ fun AppNav(
     sesion: Sesion,
     listaViewModel: ListaViewModel,
     detalleViewModel: DetalleViewModel,
+    favoritosViewModel: FavoritosViewModel,
     onCerrarSesion: () -> Unit
 ) {
     val esAdministrador = sesion.rol == RolUsuario.ADMIN
@@ -55,9 +59,22 @@ fun AppNav(
             onVolver = { pantalla = PantallaAplicacion.CATALOGO }
         )
 
+        pantalla == PantallaAplicacion.FAVORITOS -> FavoritosScreen(
+            viewModel = favoritosViewModel,
+            esAdministrador = esAdministrador,
+            onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },
+            onAbrirDetalle = { id ->
+                pokemonSeleccionado = id
+                pantalla = PantallaAplicacion.DETALLE
+            },
+            onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
+            onCerrarSesion = onCerrarSesion
+        )
+
         else -> CatalogoInicio(
             esAdministrador = esAdministrador,
             listaViewModel = listaViewModel,
+            onAbrirFavoritos = { pantalla = PantallaAplicacion.FAVORITOS },
             onAbrirDetalle = { id ->
                 pokemonSeleccionado = id
                 pantalla = PantallaAplicacion.DETALLE
@@ -72,6 +89,7 @@ fun AppNav(
 private fun CatalogoInicio(
     esAdministrador: Boolean,
     listaViewModel: ListaViewModel,
+    onAbrirFavoritos: () -> Unit,
     onAbrirDetalle: (String) -> Unit,
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
@@ -79,6 +97,7 @@ private fun CatalogoInicio(
     ListaScreen(
         viewModel = listaViewModel,
         esAdministrador = esAdministrador,
+        onAbrirFavoritos = onAbrirFavoritos,
         onAbrirDetalle = onAbrirDetalle,
         onAbrirAdmin = onAbrirAdmin,
         onCerrarSesion = onCerrarSesion

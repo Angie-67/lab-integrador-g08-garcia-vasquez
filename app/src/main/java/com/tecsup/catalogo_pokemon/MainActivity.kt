@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
 import com.tecsup.catalogo_pokemon.ui.factory.AppViewModelFactory
+import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosViewModel
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 import com.tecsup.catalogo_pokemon.ui.login.LoginScreen
@@ -36,6 +37,9 @@ class MainActivity : ComponentActivity() {
                     },
                     crearDetalleViewModel = {
                         ViewModelProvider(this@MainActivity, factory)[DetalleViewModel::class.java]
+                    },
+                    crearFavoritosViewModel = {
+                        ViewModelProvider(this@MainActivity, factory)[FavoritosViewModel::class.java]
                     }
                 )
             }
@@ -47,7 +51,8 @@ class MainActivity : ComponentActivity() {
 private fun LoginApp(
     viewModel: LoginViewModel,
     crearListaViewModel: () -> ListaViewModel,
-    crearDetalleViewModel: () -> DetalleViewModel
+    crearDetalleViewModel: () -> DetalleViewModel,
+    crearFavoritosViewModel: () -> FavoritosViewModel
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -74,7 +79,14 @@ private fun LoginApp(
             } else {
                 val listaViewModel = remember(sesion.uid) { crearListaViewModel() }
                 val detalleViewModel = remember(sesion.uid) { crearDetalleViewModel() }
-                AppNav(sesion, listaViewModel, detalleViewModel, viewModel::cerrarSesion)
+                val favoritosViewModel = remember(sesion.uid) { crearFavoritosViewModel() }
+                AppNav(
+                    sesion = sesion,
+                    listaViewModel = listaViewModel,
+                    detalleViewModel = detalleViewModel,
+                    favoritosViewModel = favoritosViewModel,
+                    onCerrarSesion = viewModel::cerrarSesion
+                )
             }
         }
     }
