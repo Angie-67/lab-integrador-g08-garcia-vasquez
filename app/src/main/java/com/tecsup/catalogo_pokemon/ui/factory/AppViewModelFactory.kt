@@ -7,6 +7,7 @@ import com.tecsup.catalogo_pokemon.ui.admin.AdminViewModel
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
+import com.tecsup.catalogo_pokemon.ui.login.LoginViewModel
 
 class AppViewModelFactory(
     private val appContainer: AppContainer
@@ -26,6 +27,9 @@ class AppViewModelFactory(
 
             modelClass.isAssignableFrom(AdminViewModel::class.java) ->
                 AdminViewModel(appContainer.itemRepository)
+
+            modelClass.isAssignableFrom(LoginViewModel::class.java) ->
+                LoginViewModel(appContainer.authRepository)
 
             else -> throw IllegalArgumentException(
                 "ViewModel no registrado: ${modelClass.name}"
