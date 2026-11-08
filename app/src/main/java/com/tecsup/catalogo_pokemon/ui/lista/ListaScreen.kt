@@ -13,8 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,8 +32,8 @@ fun ListaScreen(
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
-    val estado by viewModel.estado.collectAsState()
-    val aviso by viewModel.aviso.collectAsState()
+    val estado by viewModel.estado.collectAsStateWithLifecycle()
+    val aviso by viewModel.aviso.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier

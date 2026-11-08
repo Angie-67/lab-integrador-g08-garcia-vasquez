@@ -5,9 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
 import com.tecsup.catalogo_pokemon.ui.factory.AppViewModelFactory
@@ -49,7 +49,7 @@ private fun LoginApp(
     crearListaViewModel: () -> ListaViewModel,
     crearDetalleViewModel: () -> DetalleViewModel
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     when (val current = state) {
         UiState.Cargando -> LoginScreen(
