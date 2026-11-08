@@ -26,7 +26,7 @@ class AppViewModelFactory(
                 FavoritosViewModel(appContainer.itemRepository)
 
             modelClass.isAssignableFrom(AdminViewModel::class.java) ->
-                AdminViewModel(appContainer.itemRepository)
+                AdminViewModel(appContainer.itemRepository, appContainer.notificador)
 
             modelClass.isAssignableFrom(LoginViewModel::class.java) ->
                 LoginViewModel(appContainer.authRepository)

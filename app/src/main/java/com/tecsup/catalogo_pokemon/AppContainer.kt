@@ -10,13 +10,21 @@ import com.tecsup.catalogo_pokemon.data.local.AppDatabase
 import com.tecsup.catalogo_pokemon.data.remote.RetrofitClient
 import com.tecsup.catalogo_pokemon.data.repository.ItemRepository
 import com.tecsup.catalogo_pokemon.data.repository.ItemRepositoryImpl
+import com.tecsup.catalogo_pokemon.notification.Notificador
+import com.tecsup.catalogo_pokemon.notification.NotificadorAndroid
 
 interface AppContainer {
     val itemRepository: ItemRepository
     val authRepository: AuthRepository
+    val notificador: Notificador
 }
 
 class AppDataContainer(context: Context) : AppContainer {
+    private val appContext = context.applicationContext
+
+    override val notificador: Notificador by lazy {
+        NotificadorAndroid(appContext)
+    }
 
     override val authRepository: AuthRepository by lazy {
         FirebaseAuthRepository(
@@ -27,7 +35,7 @@ class AppDataContainer(context: Context) : AppContainer {
 
     private val database: AppDatabase by lazy {
         Room.databaseBuilder(
-            context.applicationContext,
+            appContext,
             AppDatabase::class.java,
             "catalogo_pokemon.db"
         ).build()

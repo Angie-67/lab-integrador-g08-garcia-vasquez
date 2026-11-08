@@ -3,6 +3,7 @@ package com.tecsup.catalogo_pokemon.ui.admin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecsup.catalogo_pokemon.data.repository.ItemRepository
+import com.tecsup.catalogo_pokemon.notification.Notificador
 import com.tecsup.catalogo_pokemon.ui.UiState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ data class AdminPanelData(
 )
 
 class AdminViewModel(
-    private val repository: ItemRepository
+    private val repository: ItemRepository,
+    private val notificador: Notificador
 ) : ViewModel() {
 
     private val _uiState =
@@ -58,11 +60,13 @@ class AdminViewModel(
                 repository.refrescar().fold(
                     onSuccess = { cantidad ->
                         val totales = leerTotales()
+                        val mensaje = "Se guardaron $cantidad elementos."
                         _uiState.value = UiState.Exito(
                             totales.copy(
-                                mensaje = "Se sincronizaron $cantidad Pokémon."
+                                mensaje = mensaje
                             )
                         )
+                        notificador.mostrar("Sincronización completada", mensaje)
                     },
                     onFailure = { error ->
                         _uiState.value = UiState.Error(
