@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
+import com.tecsup.catalogo_pokemon.ui.lista.ListaScreen
+import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 
 private enum class PantallaAplicacion {
     CATALOGO,
@@ -27,6 +29,7 @@ private enum class PantallaAplicacion {
 @Composable
 fun AppNav(
     sesion: Sesion,
+    listaViewModel: ListaViewModel,
     onCerrarSesion: () -> Unit
 ) {
     val esAdministrador = sesion.rol == RolUsuario.ADMIN
@@ -42,8 +45,8 @@ fun AppNav(
         )
 
         else -> CatalogoInicio(
-            sesion = sesion,
             esAdministrador = esAdministrador,
+            listaViewModel = listaViewModel,
             onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
             onCerrarSesion = onCerrarSesion
         )
@@ -52,50 +55,17 @@ fun AppNav(
 
 @Composable
 private fun CatalogoInicio(
-    sesion: Sesion,
     esAdministrador: Boolean,
+    listaViewModel: ListaViewModel,
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
-    PantallaBase {
-        Text("Pokédex", style = MaterialTheme.typography.headlineLarge)
-        Text(
-            text = "Catálogo Pokémon",
-            modifier = Modifier.padding(top = 12.dp),
-            style = MaterialTheme.typography.titleLarge
-        )
-        Text(
-            text = "Sesión: ${sesion.correo}",
-            modifier = Modifier.padding(top = 8.dp),
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Text(
-            text = "Rol: ${sesion.rol.valorFirestore}",
-            modifier = Modifier.padding(top = 4.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = "La pantalla del catálogo se completará en R03.",
-            modifier = Modifier.padding(top = 24.dp),
-            style = MaterialTheme.typography.bodyLarge
-        )
-
-        if (esAdministrador) {
-            Button(
-                onClick = onAbrirAdmin,
-                modifier = Modifier.padding(top = 24.dp)
-            ) {
-                Text("Panel de administrador")
-            }
-        }
-
-        Button(
-            onClick = onCerrarSesion,
-            modifier = Modifier.padding(top = 12.dp)
-        ) {
-            Text("Cerrar sesión")
-        }
-    }
+    ListaScreen(
+        viewModel = listaViewModel,
+        esAdministrador = esAdministrador,
+        onAbrirAdmin = onAbrirAdmin,
+        onCerrarSesion = onCerrarSesion
+    )
 }
 
 @Composable

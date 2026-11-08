@@ -7,9 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
 import com.tecsup.catalogo_pokemon.ui.factory.AppViewModelFactory
+import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 import com.tecsup.catalogo_pokemon.ui.login.LoginScreen
 import com.tecsup.catalogo_pokemon.ui.login.LoginViewModel
 import com.tecsup.catalogo_pokemon.ui.navigation.AppNav
@@ -21,21 +23,27 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val container = (application as CatalogoApplication).container
-        val loginViewModel = ViewModelProvider(
-            this,
-            AppViewModelFactory(container)
-        )[LoginViewModel::class.java]
+        val factory = AppViewModelFactory(container)
+        val loginViewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
         setContent {
             Catalogo_PokemonTheme {
-                LoginApp(viewModel = loginViewModel)
+                LoginApp(
+                    viewModel = loginViewModel,
+                    crearListaViewModel = {
+                        ViewModelProvider(this@MainActivity, factory)[ListaViewModel::class.java]
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun LoginApp(viewModel: LoginViewModel) {
+private fun LoginApp(
+    viewModel: LoginViewModel,
+    crearListaViewModel: () -> ListaViewModel
+) {
     val state by viewModel.uiState.collectAsState()
 
     when (val current = state) {
@@ -59,7 +67,8 @@ private fun LoginApp(viewModel: LoginViewModel) {
                     onIniciarSesion = viewModel::iniciarSesion
                 )
             } else {
-                AppNav(sesion, viewModel::cerrarSesion)
+                val listaViewModel = remember(sesion.uid) { crearListaViewModel() }
+                AppNav(sesion, listaViewModel, viewModel::cerrarSesion)
             }
         }
     }
