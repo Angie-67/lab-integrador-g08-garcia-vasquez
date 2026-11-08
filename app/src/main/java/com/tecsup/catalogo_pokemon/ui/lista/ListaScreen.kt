@@ -31,6 +31,7 @@ fun ListaScreen(
     onAbrirDetalle: (String) -> Unit,
     onAbrirFavoritos: () -> Unit,
     onAbrirAdmin: () -> Unit,
+    onAbrirPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -58,8 +59,8 @@ fun ListaScreen(
                         Text("Panel Admin")
                     }
                 }
-                TextButton(onClick = onCerrarSesion) {
-                    Text("Salir")
+                TextButton(onClick = onAbrirPerfil) {
+                    Text("Perfil")
                 }
             }
         }
@@ -101,6 +102,7 @@ fun ListaScreen(
                         items(resultado.datos, key = Item::id) { item ->
                             PokemonRow(
                                 item = item,
+                                esAdministrador = esAdministrador,
                                 onAbrirDetalle = { onAbrirDetalle(item.id) },
                                 onAlternarFavorito = {
                                     viewModel.alternarFavorito(item.id)
@@ -117,6 +119,7 @@ fun ListaScreen(
 @Composable
 private fun PokemonRow(
     item: Item,
+    esAdministrador: Boolean,
     onAbrirDetalle: () -> Unit,
     onAlternarFavorito: () -> Unit
 ) {

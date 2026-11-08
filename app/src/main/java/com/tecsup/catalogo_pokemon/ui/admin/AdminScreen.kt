@@ -38,6 +38,7 @@ import com.tecsup.catalogo_pokemon.ui.components.ErrorView
 fun AdminScreen(
     viewModel: AdminViewModel,
     onVolver: () -> Unit,
+    onAbrirPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
@@ -80,7 +81,7 @@ fun AdminScreen(
             Text("Panel Admin", style = MaterialTheme.typography.headlineSmall)
             Row {
                 TextButton(onClick = onVolver) { Text("Catálogo") }
-                TextButton(onClick = onCerrarSesion) { Text("Salir") }
+                TextButton(onClick = onAbrirPerfil) { Text("Perfil") }
             }
         }
 

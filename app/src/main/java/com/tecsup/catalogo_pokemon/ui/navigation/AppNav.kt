@@ -15,12 +15,14 @@ import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosScreen
 import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaScreen
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
+import com.tecsup.catalogo_pokemon.ui.perfil.PerfilScreen
 
 private enum class PantallaAplicacion {
     CATALOGO,
     FAVORITOS,
     DETALLE,
-    ADMIN
+    ADMIN,
+    PERFIL
 }
 
 @Composable
@@ -44,9 +46,18 @@ fun AppNav(
             AdminScreen(
                 viewModel = adminViewModel,
                 onVolver = { pantalla = PantallaAplicacion.CATALOGO },
+                onAbrirPerfil = { pantalla = PantallaAplicacion.PERFIL },
                 onCerrarSesion = onCerrarSesion
             )
         }
+
+        pantalla == PantallaAplicacion.PERFIL -> PerfilScreen(
+            sesion = sesion,
+            esAdministrador = esAdministrador,
+            onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },
+            onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
+            onCerrarSesion = onCerrarSesion
+        )
 
         pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(
             pokemonId = pokemonSeleccionado!!,
@@ -75,6 +86,7 @@ fun AppNav(
                 pantalla = PantallaAplicacion.DETALLE
             },
             onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
+            onAbrirPerfil = { pantalla = PantallaAplicacion.PERFIL },
             onCerrarSesion = onCerrarSesion
         )
     }
@@ -87,6 +99,7 @@ private fun CatalogoInicio(
     onAbrirFavoritos: () -> Unit,
     onAbrirDetalle: (String) -> Unit,
     onAbrirAdmin: () -> Unit,
+    onAbrirPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     ListaScreen(
@@ -95,6 +108,7 @@ private fun CatalogoInicio(
         onAbrirFavoritos = onAbrirFavoritos,
         onAbrirDetalle = onAbrirDetalle,
         onAbrirAdmin = onAbrirAdmin,
+        onAbrirPerfil = onAbrirPerfil,
         onCerrarSesion = onCerrarSesion
     )
 }
