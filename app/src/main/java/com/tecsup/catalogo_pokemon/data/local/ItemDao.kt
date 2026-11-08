@@ -23,7 +23,7 @@ interface ItemDao {
     suspend fun guardarTodos(items: List<ItemEntity>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertarCatalogoNuevos(items: List<ItemEntity>)
+    suspend fun insertarCatalogoNuevos(items: List<ItemEntity>): List<Long>
 
     @Query(
         "UPDATE items SET dexNumber = COALESCE(dexNumber, :dexNumber), " +

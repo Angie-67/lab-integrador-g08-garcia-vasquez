@@ -1,4 +1,4 @@
-package com.tecsup.catalogo_pokemon.data.repository.mapper
+package com.tecsup.catalogo_pokemon.data.mapper
 
 import com.tecsup.catalogo_pokemon.data.local.ItemEntity
 import com.tecsup.catalogo_pokemon.data.remote.dto.ItemDto

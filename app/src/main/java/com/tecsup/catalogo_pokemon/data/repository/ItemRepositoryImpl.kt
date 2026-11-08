@@ -1,10 +1,10 @@
 package com.tecsup.catalogo_pokemon.data.repository
 
 import com.tecsup.catalogo_pokemon.data.local.ItemDao
-import com.tecsup.catalogo_pokemon.data.repository.mapper.toItem
+import com.tecsup.catalogo_pokemon.data.mapper.toItem
 import com.tecsup.catalogo_pokemon.data.remote.ApiService
-import com.tecsup.catalogo_pokemon.data.repository.mapper.toEntity
-import com.tecsup.catalogo_pokemon.data.repository.mapper.toItemDto
+import com.tecsup.catalogo_pokemon.data.mapper.toEntity
+import com.tecsup.catalogo_pokemon.data.mapper.toItemDto
 import com.tecsup.catalogo_pokemon.domain.model.Item
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -33,10 +33,12 @@ class ItemRepositoryImpl(
             }
 
             // Inserta solo Pokémon nuevos; conserva datos y favoritos existentes.
-            itemDao.insertarCatalogoNuevos(entidades)
+            val idsInsertados = itemDao.insertarCatalogoNuevos(entidades)
             // Completa columnas nuevas en filas antiguas sin borrar favoritos ni detalles ya cacheados.
             itemDao.completarMetadatosBasicos(entidades)
-            Result.success(entidades.size)
+            val cantidadInsertada = idsInsertados.count { it != -1L }
+
+            Result.success(cantidadInsertada)
         } catch (error: IOException) {
             Result.failure(error)
         } catch (error: HttpException) {
