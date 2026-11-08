@@ -13,10 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
+import com.tecsup.catalogo_pokemon.domain.model.Rol
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
 import com.tecsup.catalogo_pokemon.ui.admin.AdminViewModel
@@ -47,9 +48,9 @@ fun AppNav(
     crearAdminViewModel: () -> AdminViewModel,
     onCerrarSesion: () -> Unit
 ) {
-    val esAdministrador = sesion.rol == RolUsuario.ADMIN
-    var pantalla by remember(sesion.uid) { mutableStateOf(PantallaAplicacion.CATALOGO) }
-    var pokemonSeleccionado by remember(sesion.uid) { mutableStateOf<String?>(null) }
+    val esAdministrador = sesion.rol == Rol.ADMIN
+    var pantalla by rememberSaveable(sesion.uid) { mutableStateOf(PantallaAplicacion.CATALOGO) }
+    var pokemonSeleccionado by rememberSaveable(sesion.uid) { mutableStateOf<String?>(null) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
