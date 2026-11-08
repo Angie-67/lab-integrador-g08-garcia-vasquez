@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
 import com.tecsup.catalogo_pokemon.ui.factory.AppViewModelFactory
+import com.tecsup.catalogo_pokemon.ui.admin.AdminViewModel
 import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosViewModel
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
@@ -40,6 +41,9 @@ class MainActivity : ComponentActivity() {
                     },
                     crearFavoritosViewModel = {
                         ViewModelProvider(this@MainActivity, factory)[FavoritosViewModel::class.java]
+                    },
+                    crearAdminViewModel = {
+                        ViewModelProvider(this@MainActivity, factory)[AdminViewModel::class.java]
                     }
                 )
             }
@@ -52,7 +56,8 @@ private fun LoginApp(
     viewModel: LoginViewModel,
     crearListaViewModel: () -> ListaViewModel,
     crearDetalleViewModel: () -> DetalleViewModel,
-    crearFavoritosViewModel: () -> FavoritosViewModel
+    crearFavoritosViewModel: () -> FavoritosViewModel,
+    crearAdminViewModel: () -> AdminViewModel
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -85,6 +90,7 @@ private fun LoginApp(
                     listaViewModel = listaViewModel,
                     detalleViewModel = detalleViewModel,
                     favoritosViewModel = favoritosViewModel,
+                    crearAdminViewModel = crearAdminViewModel,
                     onCerrarSesion = viewModel::cerrarSesion
                 )
             }
