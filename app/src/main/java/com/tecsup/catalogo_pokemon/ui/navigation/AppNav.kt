@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,8 @@ import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
 import com.tecsup.catalogo_pokemon.ui.admin.AdminViewModel
+import com.tecsup.catalogo_pokemon.ui.components.AdminNavIcon
+import com.tecsup.catalogo_pokemon.ui.components.AdminNavIconType
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleScreen
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosScreen
@@ -59,14 +62,46 @@ fun AppNav(
                         NavigationBarItem(
                             selected = pantalla == PantallaAplicacion.ADMIN,
                             onClick = { pantalla = PantallaAplicacion.ADMIN },
-                            icon = { Text("▦") },
-                            label = { Text("Dashboard") }
+                            icon = {
+                                AdminNavIcon(
+                                    type = AdminNavIconType.DASHBOARD,
+                                    color = if (pantalla == PantallaAplicacion.ADMIN) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                            },
+                            label = { Text("Dashboard") },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
                         )
                         NavigationBarItem(
                             selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
                             onClick = { pantalla = PantallaAplicacion.CATALOGO },
-                            icon = { Text("◉") },
-                            label = { Text("Catálogo") }
+                            icon = {
+                                AdminNavIcon(
+                                    type = AdminNavIconType.CATALOGO,
+                                    color = if (pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                            },
+                            label = { Text("Catálogo") },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
                         )
                     } else {
                         NavigationBarItem(
@@ -85,8 +120,28 @@ fun AppNav(
                     NavigationBarItem(
                         selected = pantalla == PantallaAplicacion.PERFIL,
                         onClick = { pantalla = PantallaAplicacion.PERFIL },
-                        icon = { Text("●") },
-                        label = { Text("Perfil") }
+                        icon = {
+                            if (esAdministrador) {
+                                AdminNavIcon(
+                                    type = AdminNavIconType.PERFIL,
+                                    color = if (pantalla == PantallaAplicacion.PERFIL) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    }
+                                )
+                            } else {
+                                Text("●")
+                            }
+                        },
+                        label = { Text("Perfil") },
+                        colors = if (esAdministrador) NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                        ) else NavigationBarItemDefaults.colors()
                     )
             }
         }
