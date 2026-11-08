@@ -54,7 +54,7 @@ fun AppNav(
             onVolver = { pantalla = PantallaAplicacion.CATALOGO }
         )
 
-        pantalla == PantallaAplicacion.FAVORITOS -> FavoritosScreen(
+        pantalla == PantallaAplicacion.FAVORITOS && !esAdministrador -> FavoritosScreen(
             viewModel = favoritosViewModel,
             esAdministrador = esAdministrador,
             onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },

@@ -48,8 +48,10 @@ fun ListaScreen(
         ) {
             Text("Pokédex", style = MaterialTheme.typography.headlineMedium)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                TextButton(onClick = onAbrirFavoritos) {
-                    Text("Favoritos")
+                if (!esAdministrador) {
+                    TextButton(onClick = onAbrirFavoritos) {
+                        Text("Favoritos")
+                    }
                 }
                 if (esAdministrador) {
                     TextButton(onClick = onAbrirAdmin) {
@@ -134,8 +136,10 @@ private fun PokemonRow(
                     style = MaterialTheme.typography.bodySmall
                 )
             }
-            TextButton(onClick = onAlternarFavorito) {
-                Text(if (item.isFavorite) "★ Favorito" else "☆ Favorito")
+            if (!esAdministrador) {
+                TextButton(onClick = onAlternarFavorito) {
+                    Text(if (item.isFavorite) "★ Favorito" else "☆ Favorito")
+                }
             }
             TextButton(onClick = onAbrirDetalle) {
                 Text("Detalle")
