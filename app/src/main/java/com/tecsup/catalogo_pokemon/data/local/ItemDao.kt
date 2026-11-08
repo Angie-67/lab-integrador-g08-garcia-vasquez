@@ -21,6 +21,9 @@ interface ItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun guardarTodos(items: List<ItemEntity>)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertarCatalogoNuevos(items: List<ItemEntity>)
+
     @Query(
         """
         UPDATE items
