@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -29,6 +30,7 @@ import com.tecsup.catalogo_pokemon.ui.login.LoginScreen
 import com.tecsup.catalogo_pokemon.ui.login.LoginViewModel
 import com.tecsup.catalogo_pokemon.ui.navigation.AppNav
 import com.tecsup.catalogo_pokemon.ui.theme.Catalogo_PokemonTheme
+import com.tecsup.catalogo_pokemon.ui.welcome.WelcomeScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +73,7 @@ private fun LoginApp(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var mostrarLogin by rememberSaveable { mutableStateOf(false) }
     var permisoNotificacionesResuelto by remember { mutableStateOf(false) }
     val solicitarPermisoNotificaciones = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -79,12 +82,20 @@ private fun LoginApp(
     }
 
     when (val current = state) {
-        UiState.Cargando -> LoginScreen(
-            isLoading = true,
-            errorMessage = null,
-            onIniciarSesion = viewModel::iniciarSesion,
-            loadingLabel = "Verificando sesión…"
-        )
+        UiState.Cargando -> if (mostrarLogin) {
+            LoginScreen(
+                isLoading = true,
+                errorMessage = null,
+                onIniciarSesion = viewModel::iniciarSesion,
+                loadingLabel = "Verificando sesión…",
+                onVolver = { mostrarLogin = false }
+            )
+        } else {
+            WelcomeScreen(
+                onIniciarSesion = { mostrarLogin = true },
+                isLoading = true
+            )
+        }
         is UiState.Error -> LoginScreen(
             isLoading = false,
             errorMessage = current.mensaje,
@@ -93,12 +104,18 @@ private fun LoginApp(
         is UiState.Exito -> {
             val sesion = current.datos
             if (sesion == null) {
-                LoginScreen(
-                    isLoading = false,
-                    errorMessage = null,
-                    onIniciarSesion = viewModel::iniciarSesion
-                )
+                if (mostrarLogin) {
+                    LoginScreen(
+                        isLoading = false,
+                        errorMessage = null,
+                        onIniciarSesion = viewModel::iniciarSesion,
+                        onVolver = { mostrarLogin = false }
+                    )
+                } else {
+                    WelcomeScreen(onIniciarSesion = { mostrarLogin = true })
+                }
             } else {
+                LaunchedEffect(sesion.uid) { mostrarLogin = false }
                 val tienePermiso = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                     ContextCompat.checkSelfPermission(
                         context,

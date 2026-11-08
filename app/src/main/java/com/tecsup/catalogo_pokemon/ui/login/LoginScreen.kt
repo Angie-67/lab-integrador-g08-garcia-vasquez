@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,7 @@ fun LoginScreen(
     errorMessage: String?,
     onIniciarSesion: (correo: String, contrasena: String) -> Unit,
     loadingLabel: String = "Ingresando…",
+    onVolver: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     var correo by remember { mutableStateOf("") }
@@ -52,6 +54,15 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            if (onVolver != null) {
+                TextButton(
+                    onClick = onVolver,
+                    modifier = Modifier.align(Alignment.Start),
+                    enabled = !isLoading
+                ) {
+                    Text("← Volver")
+                }
+            }
             Text("Pokédex", style = MaterialTheme.typography.headlineLarge)
             Text(
                 text = "Inicia sesión para continuar",
