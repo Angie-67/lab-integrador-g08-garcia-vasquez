@@ -20,8 +20,8 @@ import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
 import com.tecsup.catalogo_pokemon.ui.admin.AdminViewModel
-import com.tecsup.catalogo_pokemon.ui.components.AdminNavIcon
-import com.tecsup.catalogo_pokemon.ui.components.AdminNavIconType
+import com.tecsup.catalogo_pokemon.ui.components.BottomNavIcon
+import com.tecsup.catalogo_pokemon.ui.components.BottomNavIconType
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleScreen
 import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.favoritos.FavoritosScreen
@@ -58,91 +58,98 @@ fun AppNav(
                 containerColor = MaterialTheme.colorScheme.surface,
                 tonalElevation = 4.dp
             ) {
-                    if (esAdministrador) {
-                        NavigationBarItem(
-                            selected = pantalla == PantallaAplicacion.ADMIN,
-                            onClick = { pantalla = PantallaAplicacion.ADMIN },
-                            icon = {
-                                AdminNavIcon(
-                                    type = AdminNavIconType.DASHBOARD,
-                                    color = if (pantalla == PantallaAplicacion.ADMIN) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    }
-                                )
-                            },
-                            label = { Text("Dashboard") },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        )
-                        NavigationBarItem(
-                            selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
-                            onClick = { pantalla = PantallaAplicacion.CATALOGO },
-                            icon = {
-                                AdminNavIcon(
-                                    type = AdminNavIconType.CATALOGO,
-                                    color = if (pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    }
-                                )
-                            },
-                            label = { Text("Catálogo") },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = MaterialTheme.colorScheme.primary,
-                                selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                indicatorColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        )
-                    } else {
-                        NavigationBarItem(
-                            selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
-                            onClick = { pantalla = PantallaAplicacion.CATALOGO },
-                            icon = { Text("◉") },
-                            label = { Text("Pokédex") }
-                        )
-                        NavigationBarItem(
-                            selected = pantalla == PantallaAplicacion.FAVORITOS,
-                            onClick = { pantalla = PantallaAplicacion.FAVORITOS },
-                            icon = { Text("♡") },
-                            label = { Text("Favoritos") }
-                        )
-                    }
+                val itemColors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    indicatorColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+
+                if (esAdministrador) {
                     NavigationBarItem(
-                        selected = pantalla == PantallaAplicacion.PERFIL,
-                        onClick = { pantalla = PantallaAplicacion.PERFIL },
+                        selected = pantalla == PantallaAplicacion.ADMIN,
+                        onClick = { pantalla = PantallaAplicacion.ADMIN },
                         icon = {
-                            if (esAdministrador) {
-                                AdminNavIcon(
-                                    type = AdminNavIconType.PERFIL,
-                                    color = if (pantalla == PantallaAplicacion.PERFIL) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    }
-                                )
-                            } else {
-                                Text("●")
-                            }
+                            BottomNavIcon(
+                                type = BottomNavIconType.DASHBOARD,
+                                color = if (pantalla == PantallaAplicacion.ADMIN) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
                         },
-                        label = { Text("Perfil") },
-                        colors = if (esAdministrador) NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.primary,
-                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            indicatorColor = MaterialTheme.colorScheme.surfaceVariant
-                        ) else NavigationBarItemDefaults.colors()
+                        label = { Text("Dashboard") },
+                        colors = itemColors
                     )
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
+                        onClick = { pantalla = PantallaAplicacion.CATALOGO },
+                        icon = {
+                            BottomNavIcon(
+                                type = BottomNavIconType.CATALOGO,
+                                color = if (pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                        },
+                        label = { Text("Catálogo") },
+                        colors = itemColors
+                    )
+                } else {
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
+                        onClick = { pantalla = PantallaAplicacion.CATALOGO },
+                        icon = {
+                            BottomNavIcon(
+                                type = BottomNavIconType.CATALOGO,
+                                color = if (pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                        },
+                        label = { Text("Pokédex") },
+                        colors = itemColors
+                    )
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.FAVORITOS,
+                        onClick = { pantalla = PantallaAplicacion.FAVORITOS },
+                        icon = {
+                            BottomNavIcon(
+                                type = BottomNavIconType.FAVORITOS,
+                                color = if (pantalla == PantallaAplicacion.FAVORITOS) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                        },
+                        label = { Text("Favoritos") },
+                        colors = itemColors
+                    )
+                }
+
+                NavigationBarItem(
+                    selected = pantalla == PantallaAplicacion.PERFIL,
+                    onClick = { pantalla = PantallaAplicacion.PERFIL },
+                    icon = {
+                        BottomNavIcon(
+                            type = BottomNavIconType.PERFIL,
+                            color = if (pantalla == PantallaAplicacion.PERFIL) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
+                    },
+                    label = { Text("Perfil") },
+                    colors = itemColors
+                )
             }
         }
     ) { innerPadding ->

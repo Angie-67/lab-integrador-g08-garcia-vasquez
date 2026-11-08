@@ -7,20 +7,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
 
-enum class AdminNavIconType {
+enum class BottomNavIconType {
     DASHBOARD,
     CATALOGO,
+    FAVORITOS,
     PERFIL
 }
 
 @Composable
-fun AdminNavIcon(
-    type: AdminNavIconType,
-    color: androidx.compose.ui.graphics.Color,
+fun BottomNavIcon(
+    type: BottomNavIconType,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
     Canvas(modifier = modifier.size(24.dp)) {
@@ -28,7 +30,7 @@ fun AdminNavIcon(
         val roundedStroke = Stroke(width = strokeWidth)
 
         when (type) {
-            AdminNavIconType.DASHBOARD -> {
+            BottomNavIconType.DASHBOARD -> {
                 val cell = 7.5.dp.toPx()
                 val gap = 3.dp.toPx()
                 val start = 2.dp.toPx()
@@ -49,7 +51,7 @@ fun AdminNavIcon(
                 }
             }
 
-            AdminNavIconType.CATALOGO -> {
+            BottomNavIconType.CATALOGO -> {
                 val book = Path().apply {
                     moveTo(4.dp.toPx(), 3.dp.toPx())
                     lineTo(10.dp.toPx(), 4.dp.toPx())
@@ -69,7 +71,18 @@ fun AdminNavIcon(
                 drawPath(path = book, color = color, style = roundedStroke)
             }
 
-            AdminNavIconType.PERFIL -> {
+            BottomNavIconType.FAVORITOS -> {
+                val heart = Path().apply {
+                    moveTo(12.dp.toPx(), 21.dp.toPx())
+                    cubicTo(10.dp.toPx(), 19.dp.toPx(), 3.dp.toPx(), 14.dp.toPx(), 3.dp.toPx(), 8.dp.toPx())
+                    cubicTo(3.dp.toPx(), 3.dp.toPx(), 9.dp.toPx(), 2.dp.toPx(), 12.dp.toPx(), 7.dp.toPx())
+                    cubicTo(15.dp.toPx(), 2.dp.toPx(), 21.dp.toPx(), 3.dp.toPx(), 21.dp.toPx(), 8.dp.toPx())
+                    cubicTo(21.dp.toPx(), 14.dp.toPx(), 14.dp.toPx(), 19.dp.toPx(), 12.dp.toPx(), 21.dp.toPx())
+                }
+                drawPath(path = heart, color = color, style = roundedStroke)
+            }
+
+            BottomNavIconType.PERFIL -> {
                 drawCircle(
                     color = color,
                     radius = 3.5.dp.toPx(),
