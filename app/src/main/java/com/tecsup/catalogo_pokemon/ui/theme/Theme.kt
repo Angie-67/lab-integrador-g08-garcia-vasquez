@@ -9,35 +9,47 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = PokeRedLight,
+    onPrimary = Color(0xFF690014),
+    secondary = PokeYellowLight,
+    onSecondary = Color(0xFF3E2F00),
+    tertiary = PokeBlueLight,
+    onTertiary = Color(0xFF002D62),
+    background = PokeBackgroundDark,
+    onBackground = Color(0xFFE4E7EF),
+    surface = PokeSurfaceDark,
+    onSurface = Color(0xFFE4E7EF),
+    surfaceVariant = Color(0xFF292E39),
+    onSurfaceVariant = Color(0xFFC4C8D3),
+    error = Color(0xFFFFB4AB),
+    onError = Color(0xFF690005)
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = PokeRed,
     onPrimary = Color.White,
+    secondary = PokeBlue,
     onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiary = PokeYellow,
+    onTertiary = PokeInk,
+    background = PokeCanvas,
+    onBackground = PokeInk,
+    surface = Color.White,
+    onSurface = PokeInk,
+    surfaceVariant = Color(0xFFE9ECF4),
+    onSurfaceVariant = Color(0xFF454B57),
+    error = Color(0xFFBA1A1A),
+    onError = Color.White
 )
 
 @Composable
 fun Catalogo_PokemonTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
