@@ -2,17 +2,19 @@ package com.tecsup.catalogo_pokemon.ui.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.ui.unit.dp
 import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
@@ -43,108 +45,88 @@ fun AppNav(
     onCerrarSesion: () -> Unit
 ) {
     val esAdministrador = sesion.rol == RolUsuario.ADMIN
-    var pantalla by remember(sesion.uid) {
-        mutableStateOf(PantallaAplicacion.CATALOGO)
-    }
+    var pantalla by remember(sesion.uid) { mutableStateOf(PantallaAplicacion.CATALOGO) }
     var pokemonSeleccionado by remember(sesion.uid) { mutableStateOf<String?>(null) }
 
-    val mostrarNavegacionAdmin = esAdministrador && pantalla in setOf(
-        PantallaAplicacion.ADMIN,
-        PantallaAplicacion.CATALOGO,
-        PantallaAplicacion.PERFIL
-    )
-
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
-            if (mostrarNavegacionAdmin) {
-                NavigationBar {
-                    NavigationBarItem(
-                        selected = pantalla == PantallaAplicacion.ADMIN,
-                        onClick = { pantalla = PantallaAplicacion.ADMIN },
-                        icon = { Text("▦") },
-                        label = { Text("Dashboard") }
-                    )
-                    NavigationBarItem(
-                        selected = pantalla == PantallaAplicacion.CATALOGO,
-                        onClick = { pantalla = PantallaAplicacion.CATALOGO },
-                        icon = { Text("☰") },
-                        label = { Text("Catálogo") }
-                    )
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 4.dp
+            ) {
+                    if (esAdministrador) {
+                        NavigationBarItem(
+                            selected = pantalla == PantallaAplicacion.ADMIN,
+                            onClick = { pantalla = PantallaAplicacion.ADMIN },
+                            icon = { Text("▦") },
+                            label = { Text("Dashboard") }
+                        )
+                        NavigationBarItem(
+                            selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
+                            onClick = { pantalla = PantallaAplicacion.CATALOGO },
+                            icon = { Text("◉") },
+                            label = { Text("Catálogo") }
+                        )
+                    } else {
+                        NavigationBarItem(
+                            selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
+                            onClick = { pantalla = PantallaAplicacion.CATALOGO },
+                            icon = { Text("◉") },
+                            label = { Text("Pokédex") }
+                        )
+                        NavigationBarItem(
+                            selected = pantalla == PantallaAplicacion.FAVORITOS,
+                            onClick = { pantalla = PantallaAplicacion.FAVORITOS },
+                            icon = { Text("♡") },
+                            label = { Text("Favoritos") }
+                        )
+                    }
                     NavigationBarItem(
                         selected = pantalla == PantallaAplicacion.PERFIL,
                         onClick = { pantalla = PantallaAplicacion.PERFIL },
                         icon = { Text("●") },
                         label = { Text("Perfil") }
                     )
-                }
             }
         }
     ) { innerPadding ->
         Box(Modifier.fillMaxSize().padding(innerPadding)) {
             when {
-        pantalla == PantallaAplicacion.ADMIN && esAdministrador -> {
-            val adminViewModel = remember(sesion.uid) { crearAdminViewModel() }
-            AdminScreen(
-                viewModel = adminViewModel
-            )
-        }
+                pantalla == PantallaAplicacion.ADMIN && esAdministrador -> {
+                    val adminViewModel = remember(sesion.uid) { crearAdminViewModel() }
+                    AdminScreen(viewModel = adminViewModel)
+                }
 
-        pantalla == PantallaAplicacion.PERFIL -> PerfilScreen(
-            sesion = sesion,
-            esAdministrador = esAdministrador,
-            onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },
-            onCerrarSesion = onCerrarSesion
-        )
+                pantalla == PantallaAplicacion.PERFIL -> PerfilScreen(
+                    sesion = sesion,
+                    esAdministrador = esAdministrador,
+                    onCerrarSesion = onCerrarSesion
+                )
 
-        pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(
-            pokemonId = pokemonSeleccionado!!,
-            viewModel = detalleViewModel,
-            onVolver = { pantalla = PantallaAplicacion.CATALOGO }
-        )
+                pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(
+                    pokemonId = pokemonSeleccionado!!,
+                    viewModel = detalleViewModel,
+                    onVolver = { pantalla = PantallaAplicacion.CATALOGO }
+                )
 
-        pantalla == PantallaAplicacion.FAVORITOS && !esAdministrador -> FavoritosScreen(
-            viewModel = favoritosViewModel,
-            esAdministrador = esAdministrador,
-            onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },
-            onAbrirDetalle = { id ->
-                pokemonSeleccionado = id
-                pantalla = PantallaAplicacion.DETALLE
-            },
-            onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
-            onCerrarSesion = onCerrarSesion
-        )
+                pantalla == PantallaAplicacion.FAVORITOS && !esAdministrador -> FavoritosScreen(
+                    viewModel = favoritosViewModel,
+                    onAbrirDetalle = { id ->
+                        pokemonSeleccionado = id
+                        pantalla = PantallaAplicacion.DETALLE
+                    }
+                )
 
-        else -> CatalogoInicio(
-            esAdministrador = esAdministrador,
-            listaViewModel = listaViewModel,
-            onAbrirFavoritos = { pantalla = PantallaAplicacion.FAVORITOS },
-            onAbrirDetalle = { id ->
-                pokemonSeleccionado = id
-                pantalla = PantallaAplicacion.DETALLE
-            },
-            onAbrirPerfil = { pantalla = PantallaAplicacion.PERFIL },
-            onCerrarSesion = onCerrarSesion
-        )
+                else -> ListaScreen(
+                    viewModel = listaViewModel,
+                    esAdministrador = esAdministrador,
+                    onAbrirDetalle = { id ->
+                        pokemonSeleccionado = id
+                        pantalla = PantallaAplicacion.DETALLE
+                    }
+                )
             }
         }
     }
-}
-
-@Composable
-private fun CatalogoInicio(
-    esAdministrador: Boolean,
-    listaViewModel: ListaViewModel,
-    onAbrirFavoritos: () -> Unit,
-    onAbrirDetalle: (String) -> Unit,
-    onAbrirPerfil: () -> Unit,
-    onCerrarSesion: () -> Unit
-) {
-    ListaScreen(
-        viewModel = listaViewModel,
-        esAdministrador = esAdministrador,
-        onAbrirFavoritos = onAbrirFavoritos,
-        onAbrirDetalle = onAbrirDetalle,
-        onAbrirPerfil = onAbrirPerfil,
-        onCerrarSesion = onCerrarSesion
-    )
 }

@@ -11,9 +11,11 @@ private val mapperJson = Json
 
 fun ItemDto.toEntity(esFavorito: Boolean): ItemEntity = ItemEntity(
     id = id,
+    dexNumber = dexNumber,
     name = name,
     imageUrl = imageUrl,
     typesJson = mapperJson.encodeToString(types),
+    abilitiesJson = mapperJson.encodeToString(abilities),
     height = height,
     weight = weight,
     statsJson = mapperJson.encodeToString(stats),
@@ -22,10 +24,14 @@ fun ItemDto.toEntity(esFavorito: Boolean): ItemEntity = ItemEntity(
 
 fun ItemEntity.toItem(): Item = Item(
     id = id,
+    dexNumber = dexNumber,
     name = name,
     imageUrl = imageUrl,
     types = runCatching {
         mapperJson.decodeFromString<List<String>>(typesJson)
+    }.getOrDefault(emptyList()),
+    abilities = runCatching {
+        mapperJson.decodeFromString<List<String>>(abilitiesJson)
     }.getOrDefault(emptyList()),
     height = height,
     weight = weight,

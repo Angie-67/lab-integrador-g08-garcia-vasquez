@@ -11,6 +11,7 @@ data class PokemonDetailDto(
     @SerialName("weight") val weight: Int = 0,
     @SerialName("sprites") val sprites: SpritesDto? = null,
     @SerialName("types") val types: List<TypeEntryDto> = emptyList(),
+    @SerialName("abilities") val abilities: List<AbilityEntryDto> = emptyList(),
     @SerialName("stats") val stats: List<StatEntryDto> = emptyList()
 )
 
@@ -34,6 +35,11 @@ data class OfficialArtworkDto(
 data class TypeEntryDto(
     @SerialName("slot") val slot: Int,
     @SerialName("type") val type: NamedApiResourceDto
+)
+
+@Serializable
+data class AbilityEntryDto(
+    @SerialName("ability") val ability: NamedApiResourceDto
 )
 
 @Serializable

@@ -34,6 +34,8 @@ class ItemRepositoryImpl(
 
             // Inserta solo Pokémon nuevos; conserva datos y favoritos existentes.
             itemDao.insertarCatalogoNuevos(entidades)
+            // Completa columnas nuevas en filas antiguas sin borrar favoritos ni detalles ya cacheados.
+            itemDao.completarMetadatosBasicos(entidades)
             Result.success(entidades.size)
         } catch (error: IOException) {
             Result.failure(error)

@@ -40,8 +40,10 @@ private val LightColorScheme = lightColorScheme(
     onBackground = PokeInk,
     surface = Color.White,
     onSurface = PokeInk,
-    surfaceVariant = Color(0xFFE9ECF4),
-    onSurfaceVariant = Color(0xFF454B57),
+    surfaceVariant = PokeAccent,
+    onSurfaceVariant = Color(0xFF757575),
+    secondaryContainer = PokeAccent,
+    onSecondaryContainer = PokeInk,
     error = Color(0xFFBA1A1A),
     onError = Color.White
 )

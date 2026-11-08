@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -23,6 +24,31 @@ interface ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertarCatalogoNuevos(items: List<ItemEntity>)
+
+    @Query(
+        "UPDATE items SET dexNumber = COALESCE(dexNumber, :dexNumber), " +
+            "imageUrl = COALESCE(imageUrl, :imageUrl), " +
+            "typesJson = CASE WHEN typesJson = '[]' THEN :typesJson ELSE typesJson END " +
+            "WHERE id = :id"
+    )
+    suspend fun completarMetadatosBasicos(
+        id: String,
+        dexNumber: Int?,
+        imageUrl: String?,
+        typesJson: String
+    )
+
+    @Transaction
+    suspend fun completarMetadatosBasicos(items: List<ItemEntity>) {
+        items.forEach { entidad ->
+            completarMetadatosBasicos(
+                id = entidad.id,
+                dexNumber = entidad.dexNumber,
+                imageUrl = entidad.imageUrl,
+                typesJson = entidad.typesJson
+            )
+        }
+    }
 
     @Query(
         """

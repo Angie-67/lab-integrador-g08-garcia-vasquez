@@ -38,7 +38,9 @@ class AppDataContainer(context: Context) : AppContainer {
             appContext,
             AppDatabase::class.java,
             "catalogo_pokemon.db"
-        ).build()
+        )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
     }
 
     override val itemRepository: ItemRepository by lazy {
