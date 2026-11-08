@@ -18,11 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
+import com.tecsup.catalogo_pokemon.ui.detalle.DetalleScreen
+import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaScreen
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 
 private enum class PantallaAplicacion {
     CATALOGO,
+    DETALLE,
     ADMIN
 }
 
@@ -30,12 +33,14 @@ private enum class PantallaAplicacion {
 fun AppNav(
     sesion: Sesion,
     listaViewModel: ListaViewModel,
+    detalleViewModel: DetalleViewModel,
     onCerrarSesion: () -> Unit
 ) {
     val esAdministrador = sesion.rol == RolUsuario.ADMIN
     var pantalla by remember(sesion.uid) {
         mutableStateOf(PantallaAplicacion.CATALOGO)
     }
+    var pokemonSeleccionado by remember(sesion.uid) { mutableStateOf<String?>(null) }
 
     when {
         pantalla == PantallaAplicacion.ADMIN && esAdministrador -> AdminInicio(
@@ -44,9 +49,19 @@ fun AppNav(
             onCerrarSesion = onCerrarSesion
         )
 
+        pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(
+            pokemonId = pokemonSeleccionado!!,
+            viewModel = detalleViewModel,
+            onVolver = { pantalla = PantallaAplicacion.CATALOGO }
+        )
+
         else -> CatalogoInicio(
             esAdministrador = esAdministrador,
             listaViewModel = listaViewModel,
+            onAbrirDetalle = { id ->
+                pokemonSeleccionado = id
+                pantalla = PantallaAplicacion.DETALLE
+            },
             onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
             onCerrarSesion = onCerrarSesion
         )
@@ -57,12 +72,14 @@ fun AppNav(
 private fun CatalogoInicio(
     esAdministrador: Boolean,
     listaViewModel: ListaViewModel,
+    onAbrirDetalle: (String) -> Unit,
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     ListaScreen(
         viewModel = listaViewModel,
         esAdministrador = esAdministrador,
+        onAbrirDetalle = onAbrirDetalle,
         onAbrirAdmin = onAbrirAdmin,
         onCerrarSesion = onCerrarSesion
     )

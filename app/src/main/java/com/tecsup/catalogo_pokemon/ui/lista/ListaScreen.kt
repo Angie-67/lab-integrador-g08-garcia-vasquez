@@ -28,6 +28,7 @@ import com.tecsup.catalogo_pokemon.ui.components.MensajeVacio
 fun ListaScreen(
     viewModel: ListaViewModel,
     esAdministrador: Boolean,
+    onAbrirDetalle: (String) -> Unit,
     onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
@@ -94,6 +95,7 @@ fun ListaScreen(
                         items(resultado.datos, key = Item::id) { item ->
                             PokemonRow(
                                 item = item,
+                                onAbrirDetalle = { onAbrirDetalle(item.id) },
                                 onAlternarFavorito = {
                                     viewModel.alternarFavorito(item.id)
                                 }
@@ -109,6 +111,7 @@ fun ListaScreen(
 @Composable
 private fun PokemonRow(
     item: Item,
+    onAbrirDetalle: () -> Unit,
     onAlternarFavorito: () -> Unit
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -129,6 +132,9 @@ private fun PokemonRow(
             }
             TextButton(onClick = onAlternarFavorito) {
                 Text(if (item.isFavorite) "★ Favorito" else "☆ Favorito")
+            }
+            TextButton(onClick = onAbrirDetalle) {
+                Text("Detalle")
             }
         }
     }

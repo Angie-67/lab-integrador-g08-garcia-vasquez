@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
 import com.tecsup.catalogo_pokemon.ui.factory.AppViewModelFactory
+import com.tecsup.catalogo_pokemon.ui.detalle.DetalleViewModel
 import com.tecsup.catalogo_pokemon.ui.lista.ListaViewModel
 import com.tecsup.catalogo_pokemon.ui.login.LoginScreen
 import com.tecsup.catalogo_pokemon.ui.login.LoginViewModel
@@ -32,6 +33,9 @@ class MainActivity : ComponentActivity() {
                     viewModel = loginViewModel,
                     crearListaViewModel = {
                         ViewModelProvider(this@MainActivity, factory)[ListaViewModel::class.java]
+                    },
+                    crearDetalleViewModel = {
+                        ViewModelProvider(this@MainActivity, factory)[DetalleViewModel::class.java]
                     }
                 )
             }
@@ -42,7 +46,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun LoginApp(
     viewModel: LoginViewModel,
-    crearListaViewModel: () -> ListaViewModel
+    crearListaViewModel: () -> ListaViewModel,
+    crearDetalleViewModel: () -> DetalleViewModel
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -68,7 +73,8 @@ private fun LoginApp(
                 )
             } else {
                 val listaViewModel = remember(sesion.uid) { crearListaViewModel() }
-                AppNav(sesion, listaViewModel, viewModel::cerrarSesion)
+                val detalleViewModel = remember(sesion.uid) { crearDetalleViewModel() }
+                AppNav(sesion, listaViewModel, detalleViewModel, viewModel::cerrarSesion)
             }
         }
     }
