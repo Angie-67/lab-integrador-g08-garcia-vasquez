@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tecsup.catalogo_pokemon.data.repository.ItemRepository
 import com.tecsup.catalogo_pokemon.domain.model.Item
+import com.tecsup.catalogo_pokemon.notification.Notificador
 import com.tecsup.catalogo_pokemon.ui.UiState
 import java.io.IOException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class ListaViewModel(
-    private val repository: ItemRepository
+    private val repository: ItemRepository,
+    private val notificador: Notificador
 ) : ViewModel() {
 
     private val _estado =
@@ -49,9 +51,13 @@ class ListaViewModel(
             }
 
             repository.refrescar().fold(
-                onSuccess = {
+                onSuccess = { cantidad ->
                     _aviso.value = null
                     _estado.value = UiState.Exito(repository.items.first())
+                    notificador.mostrar(
+                        "Sincronización completada",
+                        "Se guardaron $cantidad elementos."
+                    )
                 },
                 onFailure = { error ->
                     val guardados = repository.items.first()

@@ -1,12 +1,22 @@
 package com.tecsup.catalogo_pokemon
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.tecsup.catalogo_pokemon.ui.UiState
@@ -60,6 +70,13 @@ private fun LoginApp(
     crearAdminViewModel: () -> AdminViewModel
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var permisoNotificacionesResuelto by remember { mutableStateOf(false) }
+    val solicitarPermisoNotificaciones = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) {
+        permisoNotificacionesResuelto = true
+    }
 
     when (val current = state) {
         UiState.Cargando -> LoginScreen(
@@ -82,17 +99,37 @@ private fun LoginApp(
                     onIniciarSesion = viewModel::iniciarSesion
                 )
             } else {
-                val listaViewModel = remember(sesion.uid) { crearListaViewModel() }
-                val detalleViewModel = remember(sesion.uid) { crearDetalleViewModel() }
-                val favoritosViewModel = remember(sesion.uid) { crearFavoritosViewModel() }
-                AppNav(
-                    sesion = sesion,
-                    listaViewModel = listaViewModel,
-                    detalleViewModel = detalleViewModel,
-                    favoritosViewModel = favoritosViewModel,
-                    crearAdminViewModel = crearAdminViewModel,
-                    onCerrarSesion = viewModel::cerrarSesion
-                )
+                val tienePermiso = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                    ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                if (!tienePermiso && !permisoNotificacionesResuelto) {
+                    LaunchedEffect(sesion.uid) {
+                        solicitarPermisoNotificaciones.launch(
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                    }
+                    LoginScreen(
+                        isLoading = true,
+                        errorMessage = null,
+                        onIniciarSesion = viewModel::iniciarSesion,
+                        loadingLabel = "Solicitando permiso de notificaciones…"
+                    )
+                } else {
+                    val listaViewModel = remember(sesion.uid) { crearListaViewModel() }
+                    val detalleViewModel = remember(sesion.uid) { crearDetalleViewModel() }
+                    val favoritosViewModel = remember(sesion.uid) { crearFavoritosViewModel() }
+                    AppNav(
+                        sesion = sesion,
+                        listaViewModel = listaViewModel,
+                        detalleViewModel = detalleViewModel,
+                        favoritosViewModel = favoritosViewModel,
+                        crearAdminViewModel = crearAdminViewModel,
+                        onCerrarSesion = viewModel::cerrarSesion
+                    )
+                }
             }
         }
     }

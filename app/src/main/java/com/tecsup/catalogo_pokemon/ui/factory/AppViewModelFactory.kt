@@ -17,7 +17,7 @@ class AppViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = when {
             modelClass.isAssignableFrom(ListaViewModel::class.java) ->
-                ListaViewModel(appContainer.itemRepository)
+                ListaViewModel(appContainer.itemRepository, appContainer.notificador)
 
             modelClass.isAssignableFrom(DetalleViewModel::class.java) ->
                 DetalleViewModel(appContainer.itemRepository)
