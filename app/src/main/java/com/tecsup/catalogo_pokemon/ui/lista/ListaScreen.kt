@@ -30,7 +30,6 @@ fun ListaScreen(
     esAdministrador: Boolean,
     onAbrirDetalle: (String) -> Unit,
     onAbrirFavoritos: () -> Unit,
-    onAbrirAdmin: () -> Unit,
     onAbrirPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
@@ -54,13 +53,10 @@ fun ListaScreen(
                         Text("Favoritos")
                     }
                 }
-                if (esAdministrador) {
-                    TextButton(onClick = onAbrirAdmin) {
-                        Text("Panel Admin")
+                if (!esAdministrador) {
+                    TextButton(onClick = onAbrirPerfil) {
+                        Text("Perfil")
                     }
-                }
-                TextButton(onClick = onAbrirPerfil) {
-                    Text("Perfil")
                 }
             }
         }

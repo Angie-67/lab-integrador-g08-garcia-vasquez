@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -22,7 +21,6 @@ fun PerfilScreen(
     sesion: Sesion,
     esAdministrador: Boolean,
     onAbrirCatalogo: () -> Unit,
-    onAbrirAdmin: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
     Column(
@@ -37,7 +35,9 @@ fun PerfilScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text("Perfil", style = MaterialTheme.typography.headlineMedium)
-            TextButton(onClick = onAbrirCatalogo) { Text("Catálogo") }
+            if (!esAdministrador) {
+                TextButton(onClick = onAbrirCatalogo) { Text("Catálogo") }
+            }
         }
 
         Text("Correo", style = MaterialTheme.typography.titleMedium)
@@ -45,14 +45,6 @@ fun PerfilScreen(
         Text("Rol", style = MaterialTheme.typography.titleMedium)
         Text(if (esAdministrador) "Administrador" else "Usuario")
 
-        if (esAdministrador) {
-            OutlinedButton(
-                onClick = onAbrirAdmin,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Dashboard Admin")
-            }
-        }
         Button(onClick = onCerrarSesion, modifier = Modifier.fillMaxWidth()) {
             Text("Cerrar sesión")
         }

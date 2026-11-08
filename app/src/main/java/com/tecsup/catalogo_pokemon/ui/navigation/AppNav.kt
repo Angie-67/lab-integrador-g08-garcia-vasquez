@@ -1,10 +1,18 @@
 package com.tecsup.catalogo_pokemon.ui.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
@@ -40,14 +48,44 @@ fun AppNav(
     }
     var pokemonSeleccionado by remember(sesion.uid) { mutableStateOf<String?>(null) }
 
-    when {
+    val mostrarNavegacionAdmin = esAdministrador && pantalla in setOf(
+        PantallaAplicacion.ADMIN,
+        PantallaAplicacion.CATALOGO,
+        PantallaAplicacion.PERFIL
+    )
+
+    Scaffold(
+        bottomBar = {
+            if (mostrarNavegacionAdmin) {
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.ADMIN,
+                        onClick = { pantalla = PantallaAplicacion.ADMIN },
+                        icon = { Text("▦") },
+                        label = { Text("Dashboard") }
+                    )
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.CATALOGO,
+                        onClick = { pantalla = PantallaAplicacion.CATALOGO },
+                        icon = { Text("☰") },
+                        label = { Text("Catálogo") }
+                    )
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.PERFIL,
+                        onClick = { pantalla = PantallaAplicacion.PERFIL },
+                        icon = { Text("●") },
+                        label = { Text("Perfil") }
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        Box(Modifier.fillMaxSize().padding(innerPadding)) {
+            when {
         pantalla == PantallaAplicacion.ADMIN && esAdministrador -> {
             val adminViewModel = remember(sesion.uid) { crearAdminViewModel() }
             AdminScreen(
-                viewModel = adminViewModel,
-                onVolver = { pantalla = PantallaAplicacion.CATALOGO },
-                onAbrirPerfil = { pantalla = PantallaAplicacion.PERFIL },
-                onCerrarSesion = onCerrarSesion
+                viewModel = adminViewModel
             )
         }
 
@@ -55,7 +93,6 @@ fun AppNav(
             sesion = sesion,
             esAdministrador = esAdministrador,
             onAbrirCatalogo = { pantalla = PantallaAplicacion.CATALOGO },
-            onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
             onCerrarSesion = onCerrarSesion
         )
 
@@ -85,10 +122,11 @@ fun AppNav(
                 pokemonSeleccionado = id
                 pantalla = PantallaAplicacion.DETALLE
             },
-            onAbrirAdmin = { pantalla = PantallaAplicacion.ADMIN },
             onAbrirPerfil = { pantalla = PantallaAplicacion.PERFIL },
             onCerrarSesion = onCerrarSesion
         )
+            }
+        }
     }
 }
 
@@ -98,7 +136,6 @@ private fun CatalogoInicio(
     listaViewModel: ListaViewModel,
     onAbrirFavoritos: () -> Unit,
     onAbrirDetalle: (String) -> Unit,
-    onAbrirAdmin: () -> Unit,
     onAbrirPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
@@ -107,7 +144,6 @@ private fun CatalogoInicio(
         esAdministrador = esAdministrador,
         onAbrirFavoritos = onAbrirFavoritos,
         onAbrirDetalle = onAbrirDetalle,
-        onAbrirAdmin = onAbrirAdmin,
         onAbrirPerfil = onAbrirPerfil,
         onCerrarSesion = onCerrarSesion
     )
