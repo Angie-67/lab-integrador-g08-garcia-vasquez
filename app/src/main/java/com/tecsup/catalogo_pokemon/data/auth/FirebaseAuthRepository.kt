@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.tecsup.catalogo_pokemon.domain.model.RolUsuario
+import com.tecsup.catalogo_pokemon.domain.model.Rol
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -21,9 +21,9 @@ class FirebaseAuthRepository(
 ) : AuthRepository {
     override suspend fun iniciarSesion(
         correo: String,
-        contrasena: String
+        clave: String
     ): Result<Sesion> = ejecutarComoResultado {
-        val usuario = auth.signInWithEmailAndPassword(correo.trim(), contrasena)
+        val usuario = auth.signInWithEmailAndPassword(correo.trim(), clave)
             .awaitTask()
             .user ?: throw IllegalStateException("Firebase no devolvió el usuario autenticado.")
 
@@ -36,9 +36,15 @@ class FirebaseAuthRepository(
         }
     }
 
-    override suspend fun restaurarSesion(): Result<Sesion?> = ejecutarComoResultado {
-        val usuario = auth.currentUser ?: return@ejecutarComoResultado null
-        cargarSesion(usuario.uid, usuario.email.orEmpty())
+    override suspend fun sesionActual(): Sesion? {
+        val usuario = auth.currentUser ?: return null
+        return try {
+            cargarSesion(usuario.uid, usuario.email.orEmpty())
+        } catch (cancelacion: CancellationException) {
+            throw cancelacion
+        } catch (error: Exception) {
+            throw error.amigable()
+        }
     }
 
     override fun cerrarSesion() {
@@ -60,7 +66,7 @@ class FirebaseAuthRepository(
         return Sesion(
             uid = uid,
             correo = correo,
-            rol = RolUsuario.desdeFirestore(perfil.getString(CAMPO_ROL))
+            rol = Rol.desdeFirestore(perfil.getString(CAMPO_ROL))
         )
     }
 

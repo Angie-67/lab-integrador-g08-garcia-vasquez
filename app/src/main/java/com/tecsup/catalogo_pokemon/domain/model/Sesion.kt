@@ -1,11 +1,11 @@
 package com.tecsup.catalogo_pokemon.domain.model
 
-enum class RolUsuario(val valorFirestore: String) {
+enum class Rol(val valorFirestore: String) {
     ADMIN("admin"),
     USUARIO("usuario");
 
     companion object {
-        fun desdeFirestore(valor: String?): RolUsuario = when (valor?.trim()?.lowercase()) {
+        fun desdeFirestore(valor: String?): Rol = when (valor?.trim()?.lowercase()) {
             "admin" -> ADMIN
             "usuario" -> USUARIO
             else -> throw IllegalStateException(
@@ -18,5 +18,5 @@ enum class RolUsuario(val valorFirestore: String) {
 data class Sesion(
     val uid: String,
     val correo: String,
-    val rol: RolUsuario
+    val rol: Rol
 )

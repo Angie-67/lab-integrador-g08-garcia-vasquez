@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tecsup.catalogo_pokemon.data.auth.AuthRepository
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.UiState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -58,14 +59,15 @@ class LoginViewModel(
     private fun restaurarSesion() {
         viewModelScope.launch {
             _uiState.value = UiState.Cargando
-            authRepository.restaurarSesion().fold(
-                onSuccess = { sesion -> _uiState.value = UiState.Exito(sesion) },
-                onFailure = { error ->
-                    _uiState.value = UiState.Error(
-                        error.message ?: "No se pudo verificar la sesión guardada."
-                    )
-                }
-            )
+            try {
+                _uiState.value = UiState.Exito(authRepository.sesionActual())
+            } catch (cancelacion: CancellationException) {
+                throw cancelacion
+            } catch (error: Exception) {
+                _uiState.value = UiState.Error(
+                    error.message ?: "No se pudo verificar la sesión guardada."
+                )
+            }
         }
     }
 
