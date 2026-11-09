@@ -100,6 +100,22 @@ fun AppNav(
                         label = { Text("Catálogo") },
                         colors = itemColors
                     )
+                    NavigationBarItem(
+                        selected = pantalla == PantallaAplicacion.FAVORITOS,
+                        onClick = { pantalla = PantallaAplicacion.FAVORITOS },
+                        icon = {
+                            BottomNavIcon(
+                                type = BottomNavIconType.FAVORITOS,
+                                color = if (pantalla == PantallaAplicacion.FAVORITOS) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
+                            )
+                        },
+                        label = { Text("Favoritos") },
+                        colors = itemColors
+                    )
                 } else {
                     NavigationBarItem(
                         selected = pantalla == PantallaAplicacion.CATALOGO || pantalla == PantallaAplicacion.DETALLE,
@@ -173,7 +189,7 @@ fun AppNav(
                     onVolver = { pantalla = PantallaAplicacion.CATALOGO }
                 )
 
-                pantalla == PantallaAplicacion.FAVORITOS && !esAdministrador -> FavoritosScreen(
+                pantalla == PantallaAplicacion.FAVORITOS -> FavoritosScreen(
                     viewModel = favoritosViewModel,
                     onAbrirDetalle = { id ->
                         pokemonSeleccionado = id
@@ -183,7 +199,6 @@ fun AppNav(
 
                 else -> ListaScreen(
                     viewModel = listaViewModel,
-                    esAdministrador = esAdministrador,
                     onAbrirDetalle = { id ->
                         pokemonSeleccionado = id
                         pantalla = PantallaAplicacion.DETALLE

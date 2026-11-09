@@ -37,7 +37,6 @@ import com.tecsup.catalogo_pokemon.ui.components.PokemonCard
 @Composable
 fun ListaScreen(
     viewModel: ListaViewModel,
-    esAdministrador: Boolean,
     onAbrirDetalle: (String) -> Unit
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
@@ -187,7 +186,7 @@ fun ListaScreen(
                             PokemonCard(
                                 item = item,
                                 onClick = { onAbrirDetalle(item.id) },
-                                mostrarFavorito = !esAdministrador,
+                                mostrarFavorito = true,
                                 onAlternarFavorito = { viewModel.alternarFavorito(item.id) }
                             )
                         }
