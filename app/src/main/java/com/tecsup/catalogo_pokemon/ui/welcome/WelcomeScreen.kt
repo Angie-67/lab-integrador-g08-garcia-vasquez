@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,13 +26,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+
+private val Ink = Color(0xFF171923)
+private val Ember = Color(0xFFE51F28)
+private val Cream = Color(0xFFFFE8D5)
 
 @Composable
 fun WelcomeScreen(
@@ -41,141 +46,221 @@ fun WelcomeScreen(
     isLoading: Boolean = false,
     loadingLabel: String = "Verificando sesión…"
 ) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 26.dp, vertical = 28.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+    Surface(modifier = Modifier.fillMaxSize(), color = Cream) {
+        Box(Modifier.fillMaxSize()) {
+            WelcomeLandscape(Modifier.fillMaxSize())
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 28.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                PokeballMark(Modifier.size(38.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Canvas(Modifier.size(42.dp)) { drawPokeball(this, size) }
+                    Text(
+                        "POKÉDEX", color = Ink, fontSize = 25.sp,
+                        fontWeight = FontWeight.Black, letterSpacing = 2.sp
+                    )
+                }
+
+                Spacer(Modifier.height(18.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(330.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(Modifier.fillMaxSize()) { drawFireSwirl(size) }
+                    Canvas(Modifier.size(218.dp)) { drawPokeball(this, size, glossy = true) }
+                }
+
                 Text(
-                    text = "POKÉDEX",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp,
-                    color = MaterialTheme.colorScheme.onBackground
+                    "¡Tu aventura Pokémon", color = Ink, fontSize = 33.sp,
+                    fontWeight = FontWeight.Black, fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center, lineHeight = 38.sp
                 )
-            }
-
-            Spacer(Modifier.height(30.dp))
-
-            val orbRed = MaterialTheme.colorScheme.primary
-            val orbYellow = MaterialTheme.colorScheme.tertiary
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(230.dp)
-                    .clip(RoundedCornerShape(32.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(Modifier.fillMaxSize()) {
-                    drawCircle(
-                        color = orbRed.copy(alpha = 0.08f),
-                        radius = size.minDimension * 0.39f,
-                        center = Offset(size.width * 0.18f, size.height * 0.18f)
-                    )
-                    drawCircle(
-                        color = orbYellow.copy(alpha = 0.2f),
-                        radius = size.minDimension * 0.22f,
-                        center = Offset(size.width * 0.88f, size.height * 0.82f)
-                    )
+                Text(
+                    "comienza aquí!", color = Ember, fontSize = 37.sp,
+                    fontWeight = FontWeight.Black, fontStyle = FontStyle.Italic,
+                    textAlign = TextAlign.Center, lineHeight = 42.sp
+                )
+                Canvas(
+                    Modifier
+                        .padding(top = 3.dp)
+                        .widthFraction(0.42f)
+                        .height(10.dp)
+                ) {
+                    val underline = Path().apply {
+                        moveTo(0f, size.height * .8f)
+                        quadraticTo(size.width * .48f, -size.height, size.width, size.height * .25f)
+                    }
+                    drawPath(underline, Ember, style = Stroke(width = 3.dp.toPx()))
                 }
-                PokeballMark(Modifier.size(154.dp))
-            }
 
-            Spacer(Modifier.height(28.dp))
-            Text(
-                text = "Tu aventura Pokémon empieza aquí",
-                modifier = Modifier.fillMaxWidth(),
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Explora el catálogo, descubre cada Pokémon y guarda tus favoritos.",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
-
-            Button(
-                onClick = onIniciarSesion,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
-                    .height(54.dp),
-                enabled = !isLoading,
-                shape = RoundedCornerShape(18.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                Text(
+                    "Explora el catálogo, descubre cada Pokémon y guarda tus favoritos.",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    color = Color(0xFF5D4B4D), fontSize = 18.sp,
+                    textAlign = TextAlign.Center, lineHeight = 25.sp
                 )
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
+
+                Button(
+                    onClick = onIniciarSesion,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 28.dp)
+                        .height(72.dp),
+                    enabled = !isLoading,
+                    shape = RoundedCornerShape(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Ember,
+                        contentColor = Color.White,
+                        disabledContainerColor = Ember.copy(alpha = .7f)
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 7.dp, pressedElevation = 2.dp)
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(Modifier.size(22.dp), color = Color.White, strokeWidth = 2.dp)
+                        Text(loadingLabel, modifier = Modifier.padding(start = 12.dp), fontSize = 19.sp)
+                    } else {
+                        Text("Iniciar sesión", fontSize = 23.sp, fontWeight = FontWeight.Bold)
+                        Text("   →", fontSize = 28.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp, bottom = 140.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Spacer(Modifier.weight(1f).height(1.dp).background(Color(0xFFB78976)))
+                    Text(
+                        "  Tu próxima aventura te espera  ", color = Color(0xFF5D4B4D),
+                        fontSize = 15.sp, fontWeight = FontWeight.SemiBold
                     )
-                    Text(loadingLabel, modifier = Modifier.padding(start = 12.dp))
-                } else {
-                    Text("Iniciar sesión", fontWeight = FontWeight.Bold)
-                    Text("  →", fontSize = 20.sp)
+                    Spacer(Modifier.weight(1f).height(1.dp).background(Color(0xFFB78976)))
                 }
             }
-
-            Text(
-                text = "Tu próxima aventura te espera",
-                modifier = Modifier.padding(top = 16.dp),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }
 
+private fun Modifier.widthFraction(fraction: Float) = this.then(
+    Modifier.fillMaxWidth(fraction)
+)
+
 @Composable
-private fun PokeballMark(modifier: Modifier = Modifier) {
-    val red = MaterialTheme.colorScheme.primary
-    val dark = MaterialTheme.colorScheme.onBackground
+private fun WelcomeLandscape(modifier: Modifier = Modifier) {
     Canvas(modifier) {
-        val center = Offset(size.width / 2f, size.height / 2f)
-        val radius = size.minDimension * 0.46f
-        drawCircle(color = Color.White, radius = radius, center = center)
-        val topHalf = Path().apply {
-            moveTo(center.x - radius, center.y)
-            arcTo(
-                rect = androidx.compose.ui.geometry.Rect(
-                    center.x - radius, center.y - radius,
-                    center.x + radius, center.y + radius
-                ),
-                startAngleDegrees = 180f,
-                sweepAngleDegrees = 180f,
-                forceMoveTo = false
-            )
+        drawRect(Brush.verticalGradient(listOf(Color(0xFFFFE7D4), Color(0xFFFFF2E7), Color(0xFFFFD1AE))))
+        // Soft, translucent Poké Ball motifs in the background.
+        listOf(Offset(size.width * .09f, size.height * .19f), Offset(size.width * .91f, size.height * .33f)).forEachIndexed { i, center ->
+            val radius = size.width * if (i == 0) .045f else .065f
+            drawCircle(Color(0x33E84D38), radius, center)
+            drawCircle(Color(0x55FFFFFF), radius * .64f, center, style = Stroke(radius * .13f))
+            drawLine(Color(0x55FFFFFF), Offset(center.x - radius, center.y), Offset(center.x + radius, center.y), radius * .12f)
+        }
+        val far = Path().apply {
+            moveTo(0f, size.height * .89f)
+            lineTo(size.width * .22f, size.height * .83f)
+            lineTo(size.width * .34f, size.height * .88f)
+            lineTo(size.width * .58f, size.height * .80f)
+            lineTo(size.width * .77f, size.height * .87f)
+            lineTo(size.width, size.height * .82f)
+            lineTo(size.width, size.height)
+            lineTo(0f, size.height)
             close()
         }
-        drawPath(path = topHalf, color = red)
-        drawRect(
-            color = dark,
-            topLeft = Offset(center.x - radius, center.y - size.height * 0.055f),
-            size = Size(radius * 2f, size.height * 0.11f)
+        drawPath(far, Brush.verticalGradient(listOf(Color(0xFFFF9D43), Color(0xFFE84925)), size.height * .8f, size.height))
+        val volcano = Path().apply {
+            moveTo(size.width * .22f, size.height)
+            lineTo(size.width * .35f, size.height * .91f)
+            lineTo(size.width * .48f, size.height * .84f)
+            lineTo(size.width * .57f, size.height * .86f)
+            lineTo(size.width * .73f, size.height * .94f)
+            lineTo(size.width * .86f, size.height)
+            close()
+        }
+        drawPath(volcano, Brush.verticalGradient(listOf(Color(0xFFFF7926), Color(0xFF6F1424)), size.height * .83f, size.height))
+        val lava = Path().apply {
+            moveTo(size.width * .48f, size.height * .85f)
+            lineTo(size.width * .51f, size.height * .875f)
+            lineTo(size.width * .54f, size.height * .858f)
+            lineTo(size.width * .58f, size.height * .90f)
+            lineTo(size.width * .55f, size.height * .89f)
+            lineTo(size.width * .52f, size.height * .91f)
+            lineTo(size.width * .49f, size.height * .875f)
+            close()
+        }
+        drawPath(lava, Color(0xFFFFD13D))
+        drawPath(
+            Path().apply {
+                moveTo(0f, size.height * .96f)
+                quadraticTo(size.width * .22f, size.height * .91f, size.width * .34f, size.height)
+                lineTo(0f, size.height)
+                close()
+            }, Color(0xFF481326)
         )
-        drawCircle(color = dark, radius = radius * 0.28f, center = center)
-        drawCircle(color = Color.White, radius = radius * 0.18f, center = center)
-        drawCircle(color = dark, radius = radius, center = center, style = Stroke(width = size.minDimension * 0.035f))
+        drawPath(
+            Path().apply {
+                moveTo(size.width, size.height * .94f)
+                quadraticTo(size.width * .78f, size.height * .91f, size.width * .69f, size.height)
+                lineTo(size.width, size.height)
+                close()
+            }, Color(0xFF481326)
+        )
+    }
+}
+
+private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawFireSwirl(canvasSize: Size) {
+    val w = canvasSize.width
+    val h = canvasSize.height
+    fun flame(color: Color, width: Float, startY: Float, bend: Float, endY: Float) {
+        val path = Path().apply {
+            moveTo(w * .08f, h * startY)
+            cubicTo(w * -.04f, h * .36f, w * .20f, h * .14f, w * .38f, h * .36f)
+            cubicTo(w * .61f, h * .64f, w * .80f, h * bend, w * .94f, h * endY)
+        }
+        drawPath(path, color, style = Stroke(width, cap = androidx.compose.ui.graphics.StrokeCap.Round))
+    }
+    flame(Color(0x44FF481F), h * .16f, .69f, .15f, .64f)
+    flame(Color(0x88FF7A16), h * .105f, .76f, .23f, .58f)
+    flame(Color(0xAAFFD333), h * .045f, .78f, .29f, .56f)
+    flame(Color(0x55FF321D), h * .08f, .61f, .12f, .52f)
+}
+
+private fun drawPokeball(
+    scope: androidx.compose.ui.graphics.drawscope.DrawScope,
+    size: Size,
+    glossy: Boolean = false
+) = with(scope) {
+    val center = Offset(size.width / 2f, size.height / 2f)
+    val radius = size.minDimension * .46f
+    val ball = androidx.compose.ui.geometry.Rect(center.x - radius, center.y - radius, center.x + radius, center.y + radius)
+    drawCircle(Color(0xFF21151B), radius * 1.045f, center)
+    drawCircle(Color(0xFFF9F4F0), radius, center)
+    val topHalf = Path().apply {
+        moveTo(center.x - radius, center.y)
+        arcTo(ball, 180f, 180f, false)
+        close()
+    }
+    drawPath(topHalf, Brush.verticalGradient(listOf(Color(0xFFFF302B), Color(0xFFE30B22)), center.y - radius, center.y))
+    drawRect(Color(0xFF21151B), Offset(center.x - radius, center.y - size.height * .055f), Size(radius * 2f, size.height * .11f))
+    drawCircle(Color(0xFF21151B), radius * .29f, center)
+    drawCircle(Brush.verticalGradient(listOf(Color.White, Color(0xFFE5D9D8))), radius * .19f, center)
+    if (glossy) {
+        drawOval(Color(0x99FFFFFF), topLeft = Offset(center.x - radius * .69f, center.y - radius * .75f), size = Size(radius * .58f, radius * .20f))
+        drawOval(Color(0x66FFFFFF), topLeft = Offset(center.x - radius * .25f, center.y - radius * .73f), size = Size(radius * .16f, radius * .07f))
+        drawCircle(Color(0xFF160D15), radius, center, style = Stroke(size.minDimension * .025f))
+    } else {
+        drawCircle(Color(0xFF21151B), radius, center, style = Stroke(size.minDimension * .035f))
     }
 }
