@@ -6,11 +6,16 @@ Aplicación Android para explorar Pokémon de tipo fuego, consultar sus detalles
 
 ## Capturas
 
-| Bienvenida | Inicio de sesión |
-|---|---|
-| ![Pantalla de bienvenida](docs/screenshots/bienvenida.png) | ![Pantalla de inicio de sesión](docs/screenshots/inicio-sesion.png) |
+Agrega las capturas al completar la Fase 2.
 
-Al cerrar la Fase 2, agregar también capturas del catálogo, el detalle de un Pokémon, Favoritos, el panel admin y una notificación recibida.
+| Pantalla | Espacio para la captura |
+|---|---|
+| Inicio de sesión | _Pegar captura aquí_ |
+| Catálogo de Pokémon de tipo fuego | _Pegar captura aquí_ |
+| Detalle de un Pokémon | _Pegar captura aquí_ |
+| Favoritos | _Pegar captura aquí_ |
+| Panel de administración | _Pegar captura aquí_ |
+| Notificación de sincronización | _Pegar captura aquí_ |
 
 ## Funcionalidades
 
