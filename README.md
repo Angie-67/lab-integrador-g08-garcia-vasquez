@@ -4,9 +4,15 @@ Aplicación Android para explorar Pokémon de tipo fuego, consultar sus detalles
 
 ## Capturas
 
-| Bienvenida | Inicio de sesión |
+| Pantalla | Captura |
 |---|---|
-| ![Pantalla de bienvenida](docs/screenshots/bienvenida.png) | ![Pantalla de inicio de sesión](docs/screenshots/inicio-sesion.png) |
+| Bienvenida | <img src="docs/screenshots/bienvenida.png" width="220" alt="Pantalla de bienvenida" /> |
+| Inicio de sesión | <img src="docs/screenshots/inicio-sesion.png" width="220" alt="Inicio de sesión" /> |
+| Catálogo de Pokémon de tipo fuego | <img src="docs/screenshots/catalogo.png" width="220" alt="Catálogo de Pokémon" /> |
+| Detalle de un Pokémon | <img src="docs/screenshots/detalle.png" width="220" alt="Detalle de Charmander" /> |
+| Favoritos | <img src="docs/screenshots/favoritos.png" width="220" alt="Pantalla de favoritos" /> |
+| Panel de administración | <img src="docs/screenshots/dashboard-admin.png" width="220" alt="Dashboard de administración" /> |
+| Acceso a notificaciones desde el catálogo | <img src="docs/screenshots/notificaciones.png" width="220" alt="Icono de notificaciones en el catálogo" /> |
 
 ## Funcionalidades
 
