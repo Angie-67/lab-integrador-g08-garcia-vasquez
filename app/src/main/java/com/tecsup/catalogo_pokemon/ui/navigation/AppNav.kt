@@ -42,6 +42,9 @@ private enum class PantallaAplicacion {
 @Composable
 fun AppNav(
     sesion: Sesion,
+    onGuardarPerfil: suspend (String, String, String, String, String) -> Result<Unit>,
+    modoOscuro: Boolean,
+    onModoOscuroChange: (Boolean) -> Unit,
     listaViewModel: ListaViewModel,
     detalleViewModel: DetalleViewModel,
     favoritosViewModel: FavoritosViewModel,
@@ -180,7 +183,12 @@ fun AppNav(
                 pantalla == PantallaAplicacion.PERFIL -> PerfilScreen(
                     sesion = sesion,
                     esAdministrador = esAdministrador,
-                    onCerrarSesion = onCerrarSesion
+                    onCerrarSesion = onCerrarSesion,
+                    modoOscuro = modoOscuro,
+                    onModoOscuroChange = onModoOscuroChange,
+                    onGuardarPerfil = { nombre, telefono, ciudad, sobreMi ->
+                        onGuardarPerfil(sesion.uid, nombre, telefono, ciudad, sobreMi)
+                    }
                 )
 
                 pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(

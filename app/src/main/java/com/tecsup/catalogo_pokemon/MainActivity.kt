@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -40,11 +41,22 @@ class MainActivity : ComponentActivity() {
         val container = (application as CatalogoApplication).container
         val factory = AppViewModelFactory(container)
         val loginViewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
+        val preferencias = getSharedPreferences("preferencias_app", MODE_PRIVATE)
 
         setContent {
-            Catalogo_PokemonTheme {
+            val systemDarkTheme = isSystemInDarkTheme()
+            var modoOscuro by rememberSaveable {
+                mutableStateOf(preferencias.getBoolean("modo_oscuro", systemDarkTheme))
+            }
+            Catalogo_PokemonTheme(darkTheme = modoOscuro) {
                 LoginApp(
                     viewModel = loginViewModel,
+                    authRepository = container.authRepository,
+                    modoOscuro = modoOscuro,
+                    onModoOscuroChange = { activado ->
+                        modoOscuro = activado
+                        preferencias.edit().putBoolean("modo_oscuro", activado).apply()
+                    },
                     crearListaViewModel = {
                         ViewModelProvider(this@MainActivity, factory)[ListaViewModel::class.java]
                     },
@@ -66,6 +78,9 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun LoginApp(
     viewModel: LoginViewModel,
+    authRepository: com.tecsup.catalogo_pokemon.data.auth.AuthRepository,
+    modoOscuro: Boolean,
+    onModoOscuroChange: (Boolean) -> Unit,
     crearListaViewModel: () -> ListaViewModel,
     crearDetalleViewModel: () -> DetalleViewModel,
     crearFavoritosViewModel: () -> FavoritosViewModel,
@@ -140,6 +155,9 @@ private fun LoginApp(
                     val favoritosViewModel = remember(sesion.uid) { crearFavoritosViewModel() }
                     AppNav(
                         sesion = sesion,
+                        onGuardarPerfil = authRepository::actualizarPerfil,
+                        modoOscuro = modoOscuro,
+                        onModoOscuroChange = onModoOscuroChange,
                         listaViewModel = listaViewModel,
                         detalleViewModel = detalleViewModel,
                         favoritosViewModel = favoritosViewModel,

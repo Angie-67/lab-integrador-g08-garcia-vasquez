@@ -18,5 +18,9 @@ enum class Rol(val valorFirestore: String) {
 data class Sesion(
     val uid: String,
     val correo: String,
-    val rol: Rol
+    val rol: Rol,
+    val nombre: String = "",
+    val telefono: String = "",
+    val ciudad: String = "",
+    val sobreMi: String = ""
 )

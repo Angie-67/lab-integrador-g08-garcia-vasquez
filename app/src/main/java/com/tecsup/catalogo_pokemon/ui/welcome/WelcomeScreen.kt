@@ -74,7 +74,6 @@ fun WelcomeScreen(
                         .height(330.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Canvas(Modifier.fillMaxSize()) { drawFireSwirl(size) }
                     Canvas(Modifier.size(218.dp)) { drawPokeball(this, size, glossy = true) }
                 }
 
@@ -161,13 +160,6 @@ private fun Modifier.widthFraction(fraction: Float) = this.then(
 private fun WelcomeLandscape(modifier: Modifier = Modifier) {
     Canvas(modifier) {
         drawRect(Brush.verticalGradient(listOf(Color(0xFFFFE7D4), Color(0xFFFFF2E7), Color(0xFFFFD1AE))))
-        // Soft, translucent Poké Ball motifs in the background.
-        listOf(Offset(size.width * .09f, size.height * .19f), Offset(size.width * .91f, size.height * .33f)).forEachIndexed { i, center ->
-            val radius = size.width * if (i == 0) .045f else .065f
-            drawCircle(Color(0x33E84D38), radius, center)
-            drawCircle(Color(0x55FFFFFF), radius * .64f, center, style = Stroke(radius * .13f))
-            drawLine(Color(0x55FFFFFF), Offset(center.x - radius, center.y), Offset(center.x + radius, center.y), radius * .12f)
-        }
         val far = Path().apply {
             moveTo(0f, size.height * .89f)
             lineTo(size.width * .22f, size.height * .83f)
@@ -218,23 +210,6 @@ private fun WelcomeLandscape(modifier: Modifier = Modifier) {
             }, Color(0xFF481326)
         )
     }
-}
-
-private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawFireSwirl(canvasSize: Size) {
-    val w = canvasSize.width
-    val h = canvasSize.height
-    fun flame(color: Color, width: Float, startY: Float, bend: Float, endY: Float) {
-        val path = Path().apply {
-            moveTo(w * .08f, h * startY)
-            cubicTo(w * -.04f, h * .36f, w * .20f, h * .14f, w * .38f, h * .36f)
-            cubicTo(w * .61f, h * .64f, w * .80f, h * bend, w * .94f, h * endY)
-        }
-        drawPath(path, color, style = Stroke(width, cap = androidx.compose.ui.graphics.StrokeCap.Round))
-    }
-    flame(Color(0x44FF481F), h * .16f, .69f, .15f, .64f)
-    flame(Color(0x88FF7A16), h * .105f, .76f, .23f, .58f)
-    flame(Color(0xAAFFD333), h * .045f, .78f, .29f, .56f)
-    flame(Color(0x55FF321D), h * .08f, .61f, .12f, .52f)
 }
 
 private fun drawPokeball(
