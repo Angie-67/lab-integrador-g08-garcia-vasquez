@@ -90,6 +90,72 @@ class ListaViewModelTest {
                 viewModel.aviso.value
             )
         }
+
+    @Test
+    fun respuestaVacia_publicaListaVaciaYNotificacion() =
+        runTest(mainDispatcherRule.dispatcher) {
+            val repository = FakeItemRepository(
+                itemsAfterRefresh = emptyList(),
+                refreshResult = Result.success(0)
+            )
+            val notificador = FakeNotificador()
+            val viewModel = ListaViewModel(repository, notificador)
+
+            advanceUntilIdle()
+
+            assertEquals(UiState.Exito<List<Item>>(emptyList()), viewModel.estado.value)
+            assertEquals(null, viewModel.aviso.value)
+            assertEquals(
+                listOf("Sincronización completada" to "Se guardaron 0 elementos."),
+                notificador.mensajes
+            )
+        }
+
+    @Test
+    fun reintentoExitoso_recuperaDeErrorYActualizaEstado() =
+        runTest(mainDispatcherRule.dispatcher) {
+            val charmander = Item(id = "charmander", name = "Charmander", imageUrl = null)
+            var attempt = 0
+            val repository = object : ItemRepository {
+                private val itemsState = MutableStateFlow<List<Item>>(emptyList())
+                private val favoritosState = MutableStateFlow<List<Item>>(emptyList())
+
+                override val items: Flow<List<Item>> = itemsState
+                override val favoritos: Flow<List<Item>> = favoritosState
+
+                override suspend fun refrescar(): Result<Int> {
+                    attempt++
+                    return if (attempt == 1) {
+                        Result.failure(IOException("Sin conexión"))
+                    } else {
+                        itemsState.value = listOf(charmander)
+                        Result.success(1)
+                    }
+                }
+
+                override suspend fun obtenerDetalle(id: String): Result<Item> = Result.failure(NotImplementedError())
+                override suspend fun alternarFavorito(id: String) {}
+                override suspend fun cantidadGuardada(): Int = itemsState.value.size
+                override suspend fun cantidadFavoritos(): Int = 0
+                override suspend fun limpiarCache() {}
+            }
+
+            val notificador = FakeNotificador()
+            val viewModel = ListaViewModel(repository, notificador)
+
+            advanceUntilIdle()
+
+            assertEquals(UiState.Error("No hay conexión a internet"), viewModel.estado.value)
+
+            viewModel.refrescar()
+            advanceUntilIdle()
+
+            assertEquals(UiState.Exito(listOf(charmander)), viewModel.estado.value)
+            assertEquals(
+                listOf("Sincronización completada" to "Se guardaron 1 elementos."),
+                notificador.mensajes
+            )
+        }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
