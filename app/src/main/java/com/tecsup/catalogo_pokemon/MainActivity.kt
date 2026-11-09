@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
             Catalogo_PokemonTheme(darkTheme = modoOscuro) {
                 LoginApp(
                     viewModel = loginViewModel,
-                    authRepository = container.authRepository,
                     modoOscuro = modoOscuro,
                     onModoOscuroChange = { activado ->
                         modoOscuro = activado
@@ -78,7 +77,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun LoginApp(
     viewModel: LoginViewModel,
-    authRepository: com.tecsup.catalogo_pokemon.data.auth.AuthRepository,
     modoOscuro: Boolean,
     onModoOscuroChange: (Boolean) -> Unit,
     crearListaViewModel: () -> ListaViewModel,
@@ -155,7 +153,6 @@ private fun LoginApp(
                     val favoritosViewModel = remember(sesion.uid) { crearFavoritosViewModel() }
                     AppNav(
                         sesion = sesion,
-                        onGuardarPerfil = authRepository::actualizarPerfil,
                         modoOscuro = modoOscuro,
                         onModoOscuroChange = onModoOscuroChange,
                         listaViewModel = listaViewModel,

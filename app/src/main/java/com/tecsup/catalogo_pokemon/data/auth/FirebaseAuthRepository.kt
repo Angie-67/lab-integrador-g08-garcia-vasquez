@@ -51,27 +51,6 @@ class FirebaseAuthRepository(
         auth.signOut()
     }
 
-    override suspend fun actualizarPerfil(
-        uid: String,
-        nombre: String,
-        telefono: String,
-        ciudad: String,
-        sobreMi: String
-    ): Result<Unit> = ejecutarComoResultado {
-        firestore.collection(COLECCION_USUARIOS)
-            .document(uid)
-            .update(
-                mapOf(
-                    CAMPO_NOMBRE to nombre.trim(),
-                    CAMPO_TELEFONO to telefono.trim(),
-                    CAMPO_CIUDAD to ciudad.trim(),
-                    CAMPO_SOBRE_MI to sobreMi.trim()
-                )
-            )
-            .awaitTask()
-        Unit
-    }
-
     private suspend fun cargarSesion(uid: String, correo: String): Sesion {
         val perfil = firestore.collection(COLECCION_USUARIOS)
             .document(uid)
@@ -87,11 +66,7 @@ class FirebaseAuthRepository(
         return Sesion(
             uid = uid,
             correo = correo,
-            rol = Rol.desdeFirestore(perfil.getString(CAMPO_ROL)),
-            nombre = perfil.getString(CAMPO_NOMBRE).orEmpty(),
-            telefono = perfil.getString(CAMPO_TELEFONO).orEmpty(),
-            ciudad = perfil.getString(CAMPO_CIUDAD).orEmpty(),
-            sobreMi = perfil.getString(CAMPO_SOBRE_MI).orEmpty()
+            rol = Rol.desdeFirestore(perfil.getString(CAMPO_ROL))
         )
     }
 
@@ -135,9 +110,5 @@ class FirebaseAuthRepository(
     private companion object {
         const val COLECCION_USUARIOS = "usuarios"
         const val CAMPO_ROL = "rol"
-        const val CAMPO_NOMBRE = "nombre"
-        const val CAMPO_TELEFONO = "telefono"
-        const val CAMPO_CIUDAD = "ciudad"
-        const val CAMPO_SOBRE_MI = "sobreMi"
     }
 }

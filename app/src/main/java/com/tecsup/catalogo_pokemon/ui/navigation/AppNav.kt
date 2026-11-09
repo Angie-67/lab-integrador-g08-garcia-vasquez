@@ -1,22 +1,40 @@
 package com.tecsup.catalogo_pokemon.ui.navigation
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tecsup.catalogo_pokemon.domain.model.Rol
 import com.tecsup.catalogo_pokemon.domain.model.Sesion
 import com.tecsup.catalogo_pokemon.ui.admin.AdminScreen
@@ -42,7 +60,6 @@ private enum class PantallaAplicacion {
 @Composable
 fun AppNav(
     sesion: Sesion,
-    onGuardarPerfil: suspend (String, String, String, String, String) -> Result<Unit>,
     modoOscuro: Boolean,
     onModoOscuroChange: (Boolean) -> Unit,
     listaViewModel: ListaViewModel,
@@ -54,9 +71,64 @@ fun AppNav(
     val esAdministrador = sesion.rol == Rol.ADMIN
     var pantalla by rememberSaveable(sesion.uid) { mutableStateOf(PantallaAplicacion.CATALOGO) }
     var pokemonSeleccionado by rememberSaveable(sesion.uid) { mutableStateOf<String?>(null) }
+    var mostrarAvisoNotificaciones by rememberSaveable { mutableStateOf(false) }
+    val colorIconoNotificaciones = MaterialTheme.colorScheme.onSurfaceVariant
+    val colorPuntoNotificaciones = MaterialTheme.colorScheme.primary
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .height(52.dp)
+                    .padding(horizontal = 14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "POKÉDEX",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.ExtraBold,
+                    letterSpacing = 1.2.sp
+                )
+                Spacer(Modifier.weight(1f))
+                IconButton(onClick = { mostrarAvisoNotificaciones = true }) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Canvas(Modifier.size(24.dp)) {
+                            val bell = Path().apply {
+                                moveTo(size.width * .25f, size.height * .72f)
+                                cubicTo(size.width * .34f, size.height * .65f, size.width * .31f, size.height * .53f, size.width * .33f, size.height * .42f)
+                                cubicTo(size.width * .36f, size.height * .15f, size.width * .64f, size.height * .15f, size.width * .67f, size.height * .42f)
+                                cubicTo(size.width * .69f, size.height * .53f, size.width * .66f, size.height * .65f, size.width * .75f, size.height * .72f)
+                                close()
+                            }
+                            drawPath(bell, colorIconoNotificaciones)
+                            drawLine(
+                                colorIconoNotificaciones,
+                                Offset(size.width * .22f, size.height * .76f),
+                                Offset(size.width * .78f, size.height * .76f),
+                                size.minDimension * .08f,
+                                cap = androidx.compose.ui.graphics.StrokeCap.Round
+                            )
+                            drawCircle(
+                                colorIconoNotificaciones,
+                                size.minDimension * .07f,
+                                Offset(size.width * .5f, size.height * .85f)
+                            )
+                        }
+                        Box(
+                            Modifier
+                                .size(8.dp)
+                                .align(Alignment.TopEnd)
+                                .clip(CircleShape)
+                                .background(colorPuntoNotificaciones)
+                        )
+                    }
+                }
+            }
+        },
         bottomBar = {
             NavigationBar(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -185,10 +257,7 @@ fun AppNav(
                     esAdministrador = esAdministrador,
                     onCerrarSesion = onCerrarSesion,
                     modoOscuro = modoOscuro,
-                    onModoOscuroChange = onModoOscuroChange,
-                    onGuardarPerfil = { nombre, telefono, ciudad, sobreMi ->
-                        onGuardarPerfil(sesion.uid, nombre, telefono, ciudad, sobreMi)
-                    }
+                    onModoOscuroChange = onModoOscuroChange
                 )
 
                 pantalla == PantallaAplicacion.DETALLE && pokemonSeleccionado != null -> DetalleScreen(
@@ -214,5 +283,18 @@ fun AppNav(
                 )
             }
         }
+    }
+
+    if (mostrarAvisoNotificaciones) {
+        AlertDialog(
+            onDismissRequest = { mostrarAvisoNotificaciones = false },
+            title = { Text("Notificaciones") },
+            text = {
+                Text("Los avisos se envían al terminar la sincronización del catálogo y aparecen en la barra de notificaciones del dispositivo.")
+            },
+            confirmButton = {
+                TextButton(onClick = { mostrarAvisoNotificaciones = false }) { Text("Entendido") }
+            }
+        )
     }
 }

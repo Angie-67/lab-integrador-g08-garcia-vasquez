@@ -217,9 +217,28 @@ private fun DashboardHero() {
             .padding(horizontal = 20.dp, vertical = 22.dp)
     ) {
         Canvas(Modifier.size(120.dp).align(Alignment.CenterEnd)) {
-            drawCircle(Color.White.copy(alpha = .10f), size.minDimension * .48f)
-            drawCircle(Color.White.copy(alpha = .28f), size.minDimension * .30f, style = Stroke(size.minDimension * .045f))
-            drawLine(Color.White.copy(alpha = .22f), Offset(size.width * .20f, size.height / 2), Offset(size.width * .80f, size.height / 2), size.minDimension * .045f)
+            val center = Offset(size.width / 2f, size.height / 2f)
+            val radius = size.minDimension * .39f
+            val ballBounds = androidx.compose.ui.geometry.Rect(
+                center.x - radius, center.y - radius,
+                center.x + radius, center.y + radius
+            )
+            drawCircle(Color.White.copy(alpha = .10f), radius * 1.13f, center)
+            drawCircle(Color.White.copy(alpha = .13f), radius, center)
+            val upperHalf = Path().apply {
+                moveTo(center.x - radius, center.y)
+                arcTo(ballBounds, 180f, 180f, false)
+                close()
+            }
+            drawPath(upperHalf, Color.White.copy(alpha = .28f))
+            drawRect(
+                Color.White.copy(alpha = .30f),
+                Offset(center.x - radius, center.y - size.height * .045f),
+                Size(radius * 2f, size.height * .09f)
+            )
+            drawCircle(Color.White.copy(alpha = .16f), radius * .28f, center)
+            drawCircle(Color.White.copy(alpha = .40f), radius * .18f, center)
+            drawCircle(Color.White.copy(alpha = .32f), radius, center, style = Stroke(size.minDimension * .035f))
         }
         Column(modifier = Modifier.fillMaxWidth(.78f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
             Text(
